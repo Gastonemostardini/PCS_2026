@@ -1,19 +1,19 @@
 #include "rational.h"
 
 template<typename I> requires integral<I>
-void Rational<I>::operator+=(const Rational<I>& other)
+Rational<I>& Rational<I>::operator+=(const Rational<I>& other)
 {
 	if (isNan() || other.isNan())
 	{
 		setNan();
-		return;
+		return *this;
 	}
 
 	if (isInf() != other.isInf())
 	{
 		num_ = (isInf()) ? sgn() : other.sgn();
 		den_ = 0;
-		return;
+		return *this;
 	}
 
 	if (isInf() && other.isInf())
@@ -22,27 +22,28 @@ void Rational<I>::operator+=(const Rational<I>& other)
 			setInf();
 		else
 			setNan();
-		return;
+		return *this;
 	}
 
 	num_ = num_ * other.den_ + other.num_ * den_;
 	den_ = den_ * other.den_;
 	normalize();
+	return *this;
 }
 
 template<typename I> requires integral<I>
-void Rational<I>::operator-=(const Rational<I>& other)
+Rational<I>& Rational<I>::operator-=(const Rational<I>& other)
 {
 	if (isNan() || other.isNan()) {
 		setNan();
-		return;
+		return *this;
 	}
 
 	if (isInf() != other.isInf())
 	{
 		num_ = (isInf()) ? sgn() : -other.sgn();
 		den_ = 0;
-		return;
+		return *this;
 	}
 
 	if (isInf() && other.isInf())
@@ -51,38 +52,41 @@ void Rational<I>::operator-=(const Rational<I>& other)
 			setNan();
 		else
 			setInf();
-		return;
+		return *this;
 	}
 
 	num_ = num_ * other.den_ - other.num_ * den_;
 	den_ = den_ * other.den_;
 	normalize();
+	return *this;
 }
 
 template<typename I> requires integral<I>
-void Rational<I>::operator*=(const Rational<I>& other)
+Rational<I>& Rational<I>::operator*=(const Rational<I>& other)
 {
 	if (isNan() || other.isNan()) {
 		setNan();
-		return;
+		return *this;
 	}
 
 	num_ = num_ * other.num_;
 	den_ = den_ * other.den_;
 	normalize();
+	return *this;
 }
 
 template<typename I> requires integral<I>
-void Rational<I>::operator/=(const Rational<I>& other)
+Rational<I>& Rational<I>::operator/=(const Rational<I>& other)
 {
 	if (isNan() || other.isNan() || isInf() || other.isInf()) {
 		setNan();
-		return;
+		return *this;
 	}
 
 	num_ = num_ * other.den_;
 	den_ = den_ * other.num_;
 	normalize();
+	return *this;
 }
 
 template<typename I> requires integral<I>
@@ -111,6 +115,11 @@ Rational<I> Rational<I>::operator/(const Rational<I>& other) const {
 	Rational<I> result(*this);
 	result /= other;
 	return result;
+}
+
+template<typename I> requires integral<I>
+Rational<I> Rational<I>::operator-() const {
+	return Rational(-num_, den);
 }
 
 template<typename I> requires integral<I>

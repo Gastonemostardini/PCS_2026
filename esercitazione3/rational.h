@@ -56,14 +56,15 @@ public:
 	Rational(I num);
 
 	/* Overloading degli operatori */
-	void operator+=(const Rational<I>& other);
-	void operator-=(const Rational<I>& other);
-	void operator*=(const Rational<I>& other);
-	void operator/=(const Rational<I>& other);
+	Rational<I>& operator+=(const Rational<I>& other);
+	Rational<I>& operator-=(const Rational<I>& other);
+	Rational<I>& operator*=(const Rational<I>& other);
+	Rational<I>& operator/=(const Rational<I>& other);
 	Rational<I> operator+(const Rational<I>& other) const;
 	Rational<I> operator-(const Rational<I>& other) const;
 	Rational<I> operator*(const Rational<I>& other) const;
 	Rational<I> operator/(const Rational<I>& other) const;
+	Rational<I> operator-() const;
 
 	/* Getter */
 	I num() const;
