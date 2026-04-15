@@ -70,4 +70,3 @@ public:
 	I num() const;
 	I den() const;
 };
-
