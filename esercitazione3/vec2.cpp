@@ -85,4 +85,3 @@ int main(void)
     std::cout << c2 << "\n";
     return 0;
 }
-
