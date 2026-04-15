@@ -24,7 +24,7 @@ ostream& operator<<(ostream& os, const vector<T>& obj) {
 		os << "vettore vuoto";
 	}
 	os << "[";
-	for (int i = 0; i < obj.size(); i++) {
+	for (std::size_t i = 0; i < obj.size(); i++) {
 		os << obj[i];
 		if (i < obj.size() - 1)
 			os << ", ";
@@ -81,7 +81,7 @@ void selection_sort(std::vector<T>& vec)
 	}
 
 	std::size_t min;
-	for (auto i = 0; i < vec.size() - 1; i++)
+	for (std::size_t i = 0; i < vec.size() - 1; i++)
 	{
 		min = i;
 		for (auto j = i + 1; j < vec.size(); j++) {
