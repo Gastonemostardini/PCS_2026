@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -93,3 +94,32 @@ void selection_sort(std::vector<T>& vec)
 		std::swap(vec[i], vec[min]);
 	}
 }
+
+template<typename T>
+void fusion(std::vector<T>& vec, int sx, int center, int dx){
+	std::vector<T> temp;
+    	int i = sx, j = center + 1;
+
+    	while (i <= center && j <= dx) {
+        	if (vec[i] <= vec[j])
+            		temp.push_back(vec[i++]);
+        	else
+   			temp.push_back(vec[j++]);
+    	}
+    	while (i <= center) temp.push_back(vec[i++]);
+    	while (j <= dx)     temp.push_back(vec[j++]);
+
+    	for (int k = 0; k < static_cast<int>(temp.size()); k++)
+        	vec[sx + k] = temp[k];
+}
+
+template<typename T>
+void mergesort(std::vector<T>& vec, int sx, int dx){
+	if (sx < dx){
+		int center = std::floor((sx + dx)/2);
+	       	mergesort(vec, sx, center);
+		mergesort(vec, center + 1, dx);
+		fusion(vec, sx, center, dx);	
+	}
+}
+

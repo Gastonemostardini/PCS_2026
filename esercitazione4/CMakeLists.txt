@@ -17,6 +17,9 @@ add_test(NAME insertionsort COMMAND test_insertionsort)
 add_executable(test_selectionsort test_selectionsort.cpp)
 add_test(NAME selectionsort COMMAND test_selectionsort)
 
+add_executable(test_mergesort test_mergesort.cpp)
+add_test(NAME test_mergesort COMMAND test_mergesort)
+
 add_executable(main main.cpp)
 
 enable_testing()
