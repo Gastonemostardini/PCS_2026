@@ -117,7 +117,7 @@ template<typename T>
 void mergesort(std::vector<T>& vec, int sx, int dx){
 	if (sx < dx){
 		int center = std::floor((sx + dx)/2);
-	       	mergesort(vec, sx, center);
+	    mergesort(vec, sx, center);
 		mergesort(vec, center + 1, dx);
 		fusion(vec, sx, center, dx);	
 	}
