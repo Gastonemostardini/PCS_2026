@@ -37,10 +37,15 @@ class Rational
 
 	/** @brief Riduce la frazione ai minimi termini usando il MCD */
 	void minimize();
+
 	/** @brief Riduce la frazione ai minimi e ordina il segno */
 	void normalize();
+	/** @brief Ordina il segno */
 	int sgn() const;
+
+	/** @brief Ritorna se è NaN*/
 	bool isNan() const;
+	/** @brief Ritorna se è inf*/
 	bool isInf() const;
 
 	void setNan();
@@ -55,16 +60,20 @@ public:
 	/** @brief Costruttore con solo numeratore */
 	Rational(I num);
 
+
 	/* Overloading degli operatori */
 	Rational<I>& operator+=(const Rational<I>& other);
 	Rational<I>& operator-=(const Rational<I>& other);
 	Rational<I>& operator*=(const Rational<I>& other);
 	Rational<I>& operator/=(const Rational<I>& other);
+
 	Rational<I> operator+(const Rational<I>& other) const;
 	Rational<I> operator-(const Rational<I>& other) const;
 	Rational<I> operator*(const Rational<I>& other) const;
 	Rational<I> operator/(const Rational<I>& other) const;
+
 	Rational<I> operator-() const;
+
 
 	/* Getter */
 	I num() const;
