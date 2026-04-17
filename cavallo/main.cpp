@@ -10,27 +10,26 @@ using namespace std;
 int main(int argc, const char* argv[]) {
     const size_t N = (argc >= 2) ? std::stoi(argv[1]) : 8;
 
+    vector<vector<int>> celle;
 	ChessBoard board = ChessBoard(N);
 	vector<int> archi(N * N, 0);
 	
 	initializeArchi(archi, N);
-	board.setCell(0, 0, "♘"); 
-	std::vector<std::vector<int>> celle;
 
-	int i = 0;
-	int j = 0;
+    int i = 0;
+    int j = 0;
+    cout << "i, j = " << i << ", " << j << endl;
+	board.setCell(i, j, "♘"); 
 
     int ni = i;
     int nj = j;
-
-    cout << board;
 
     auto vicini = horseMovableCells(N, i, j);
     for (const auto& v : vicini) {
         archi[pos(N, v[0], v[1])] -= 1;
     }
 
-    for(size_t a = 0; a < N * N -1; a++) {
+    for (size_t a = 0; a < N * N - 1; a++) {
         celle = horseMovableCells(N, i, j);
 
         std::vector<std::vector<int>> celle_libere;
@@ -70,7 +69,7 @@ int main(int argc, const char* argv[]) {
         this_thread::sleep_for(chrono::milliseconds(1));
     }
 
-    board.setCell(i, j, "♘"); 
+    board.setCell(i, j, "♘");
     cout << board;
 
 	return 0;
