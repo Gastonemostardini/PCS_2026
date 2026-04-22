@@ -29,7 +29,7 @@ int main() {
         rf.fill(v, -100, 100);
 
         vs = v;
-	tc.tic();
+	    tc.tic();
         selection_sort(vs);
         times[i] = tc.toc();
 
@@ -43,16 +43,44 @@ int main() {
         insertion_sort(vs);
         times3[i] = tc.toc();
 
-	vs = v;
-	tc.tic();
-	if (i >= 1) mergesort(vs, 0, i - 1);
-	times4[i] = tc.toc();
+	    //vs = v;
+	    //tc.tic();
+	    //if (i >= 1) mergesort(vs, 0, i - 1);
+	    //times4[i] = tc.toc();
 
     }
+
+    //for (auto i = 2; i < 16; i++) {
+    //    int j = pow(2, i);
+    //    v.resize(j);
+    //    rf.fill(v, -100, 100);
+
+    //    vs = v;
+    //    tc.tic();
+    //    selection_sort(vs);
+    //    times[i] = tc.toc();
+
+    //    vs = v;
+    //    tc.tic();
+    //    bubble_sort(vs);
+    //    times2[i] = tc.toc();
+
+    //    vs = v;
+    //    tc.tic();
+    //    insertion_sort(vs);
+    //    times3[i] = tc.toc();
+
+    //    //vs = v;
+    //    //tc.tic();
+    //    //if (j >= 1) mergesort(vs, 0, j - 1);
+    //    //times4[i] = tc.toc();
+
+    //}
+
     cout << std::fixed << std::setprecision(12);
     cout << "timesSelection = " << times << ";" << endl;
     cout << "timesBobble = " << times2 << ";" << endl;
     cout << "timesInsertion = " << times3 << ";" << endl;
-    cout << "timesMerge = " << times4 << ";" << endl;   
+    //cout << "timesMerge = " << times4 << ";" << endl;   
     return 0;
 }
