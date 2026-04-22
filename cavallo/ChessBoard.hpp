@@ -6,6 +6,9 @@
 #include <stdexcept>
 #include <unordered_set>
 
+inline bool isColor = false;
+inline bool isOverlay = false;
+
 class ChessBoard {
 	int N_ = 8;
 	std::vector<std::string> v;
@@ -28,6 +31,21 @@ class ChessBoard {
 		os << '\n';
 		return os;
 	}
+
+	void print(std::ostream& os, const std::vector<std::vector<int>>& overlay) const {
+		for (int r = 0; r < N_; r++) {
+			for (int c = 0; c < N_; c++) {
+				if (getCell(r, c) != "")
+					os << getCell(r, c);
+				else
+					os << overlay[r][c];
+				os << ' ';
+			}
+			os << '\n';
+		}
+		os << '\n';
+	}
+
 
 	int pos(int r, int c) const {
 		return r * N_ + c;
@@ -100,4 +118,70 @@ public:
 		v[pos(r,c)] = piece;
 	}
 
+	void print(std::ostream& os, const std::vector<int>& overlay) const {
+		for (int r = 0; r < N_; r++) {
+			for (int c = 0; c < N_; c++) {
+				if (getCell(r, c) != "")
+					os << getCell(r, c);
+				else
+					os << overlay[pos(r, c)];
+				os << ' ';
+			}
+			os << '\n';
+		}
+		os << '\n';
+	}
+
+
+	void print(std::ostream& os,
+		const std::vector<int>& overlay,
+		const std::vector<std::vector<int>>& vicini) const {
+
+		const std::string GIALLO = "\033[33m";
+		const std::string RESET = "\033[0m";
+
+		std::set<int> vicini_pos;
+		for (const auto& vicinio : vicini)
+			vicini_pos.insert(pos(vicinio[0], vicinio[1]));
+
+		for (int r = 0; r < N_; r++) {
+			for (int c = 0; c < N_; c++) {
+				if (getCell(r, c) != "")
+					os << getCell(r, c);
+				else {
+					bool evidenzia = vicini_pos.count(pos(r, c)) > 0;
+					if (evidenzia) os << GIALLO;
+					os << overlay[pos(r, c)];
+					if (evidenzia) os << RESET;
+				}
+				os << ' ';
+			}
+			os << '\n';
+		}
+		os << '\n';
+	}
+
 };
+
+
+// UTILS
+void print(ChessBoard board,
+	const std::vector<int>& overlay)
+{
+	if (isOverlay)
+		board.print(std::cout, overlay);
+	else
+		std::cout << board;
+}
+
+void print(ChessBoard board,
+	const std::vector<int>& overlay,
+	const std::vector<std::vector<int>>& highlight)
+{
+	if (isColor && isOverlay)
+		board.print(std::cout, overlay, highlight);
+	else if (isOverlay)
+		board.print(std::cout, overlay);
+	else
+		std::cout << board;
+}
