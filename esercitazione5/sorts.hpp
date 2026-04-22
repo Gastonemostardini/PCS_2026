@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
+
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj) {
 	if (obj.size() == 0) {
@@ -81,8 +82,37 @@ void quicksort(std::vector<T>& vec, int p, int r) {
 }
 
 template<typename T>
+void insertion_sort(std::vector<T>& vec)
+{
+	if (vec.size() == 0) {
+		return;
+	}
+
+	T key;
+	int i = 0;
+	for (std::size_t j = 1; j < vec.size(); j++)
+	{
+		key = vec[j];
+		i = j - 1;
+		while (i >= 0 && vec[i] > key)
+		{
+			vec[i + 1] = vec[i];
+			i--;
+		}
+		vec[i + 1] = key;
+	}
+}
+
+
+template<typename T>
 void quicksort(std::vector<T>& vec) {
-	int p = 0;
-	int r = vec.size();
-	quicksort(vec, p, r);
+	if (vec.size() > 175){
+		int p = 0;
+		int r = vec.size();
+		quicksort(vec, p, r);
+	}
+	else {
+		insertion_sort(vec);
+	}
+
 }
