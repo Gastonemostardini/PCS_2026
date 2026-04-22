@@ -86,15 +86,14 @@ int main(int argc, const char* argv[]) {
 		// Calcolo nuove celle vicine
 		vicini = horseMovableCells(N, i, j);
 		
-		// Diminuzione del valore dei nodi (ahaha la nomeclatura è un po' strana: il valore rappresenta gli archi del nodo in poszione (i, j)
+		// Diminuzione del valore dei nodi;
+		// La nomeclatura è un po' strana: il valore rappresenta gli archi del nodo in poszione (i, j)
 		for (const auto& v : vicini) {
 			archi[pos(N, v[0], v[1])] -= 1;
 		}
 
 		// Print della scacchiera	
 		print(board, archi, vicini);
-
-		//this_thread::sleep_for(chrono::milliseconds(1));
 	}
 
 	board.setCell(i, j, "♘");
