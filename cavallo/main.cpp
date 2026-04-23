@@ -29,8 +29,8 @@ int main(int argc, const char* argv[]) {
 	int i = 0;
 	int j = 0;
 
-	for (int ii = 0; ii < N; ii++) {
-		for (int jj = 0; jj < N; jj++) {
+	for (size_t ii = 0; ii < N; ii++) {
+		for (size_t jj = 0; jj < N; jj++) {
 			celle.clear();
 			board.clear();
 			initializeArchi(archi, N);
