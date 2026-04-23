@@ -5,6 +5,7 @@
 #include <string>
 #include <stdexcept>
 #include <unordered_set>
+#include <set>
 
 inline bool isColor = false;
 inline bool isOverlay = false;
@@ -62,6 +63,11 @@ public:
 		N_ = N;
 		v.clear();
 		v.resize(N_ * N_, "");
+	}
+	
+	void clear() {
+		//std::cout << "[ChessBoard::clear] chiamato, size=" << v.size() << std::endl;
+		std::fill(v.begin(), v.end(), "");
 	}
 
 	int getDim() const {
