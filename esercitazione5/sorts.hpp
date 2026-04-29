@@ -34,7 +34,7 @@ void fusion(std::vector<T>& vec, int sx, int center, int dx) {
 	while (i <= center) temp.push_back(vec[i++]);
 	while (j <= dx)     temp.push_back(vec[j++]);
 
-	for (int k = 0; k < static_cast<int>(temp.size()); k++)
+	for (size_t k = 0; k < temp.size(); k++)
 		vec[sx + k] = temp[k];
 }
 
