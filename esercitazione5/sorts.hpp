@@ -73,6 +73,26 @@ int partition(std::vector<T>& vec, int p, int r) {
 }
 
 template<typename T>
+void insertion_sort(std::vector<T>& vec, int p, int r)
+{
+	if (p >= r) return;
+
+	T key;
+	int i = 0;
+	for (int j = p + 1; j <= r; j++)
+	{
+		key = vec[j];
+		i = j - 1;
+		while (i >= p && vec[i] > key)
+		{
+			vec[i + 1] = vec[i];
+			i--;
+		}
+		vec[i + 1] = key;
+	}
+}
+
+template<typename T>
 void insertion_sort(std::vector<T>& vec)
 {
 	if (vec.size() == 0) {
@@ -96,12 +116,12 @@ void insertion_sort(std::vector<T>& vec)
 
 template<typename T>
 void quicksort(std::vector<T>& vec, int p, int r) {
-	if (vec.size() < 175) {
-		insertion_sort(vec);
-		return;
-	}
-
 	if (p < r) {
+		if (r - p + 1 < 175) {
+			insertion_sort(vec, p, r);
+			return;
+		}
+
 		int q = partition(vec, p, r);
 		quicksort(vec, p, q - 1);
 		quicksort(vec, q + 1, r);
