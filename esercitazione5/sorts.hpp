@@ -51,7 +51,7 @@ void mergesort(std::vector<T>& vec, int sx, int dx) {
 template<typename T>
 void mergesort(std::vector<T>& vec) {
 	int sx = 0;
-	int dx = vec.size();
+	int dx = vec.size() - 1;
 	return mergesort(vec, sx, dx);
 }
 
@@ -59,7 +59,7 @@ void mergesort(std::vector<T>& vec) {
 template<typename T>
 int partition(std::vector<T>& vec, int p, int r) {
 	T x = vec[r];
-	size_t i = p - 1;
+	int i = p - 1;
 
 	for (auto j = p; j < r; j++) {
 		if (vec[j] <= x) {
@@ -104,7 +104,7 @@ void quicksort(std::vector<T>& vec, int p, int r) {
 	if (p < r) {
 		int q = partition(vec, p, r);
 		quicksort(vec, p, q - 1);
-		quicksort(vec, q, r);
+		quicksort(vec, q + 1, r);
 	}
 }
 
@@ -112,6 +112,6 @@ void quicksort(std::vector<T>& vec, int p, int r) {
 template<typename T>
 void quicksort(std::vector<T>& vec) {
 	int p = 0;
-	int r = vec.size();
+	int r = vec.size() - 1;
 	quicksort(vec, p, r);
 }

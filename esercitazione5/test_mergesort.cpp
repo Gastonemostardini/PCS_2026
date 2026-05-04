@@ -10,10 +10,10 @@ int test_mergesort() {
     int size = 1;
 
     for (int i = 0; i < 100; i++) {
-        size = rand() % 100 + 2;
+        size = rand() % 1000 + 2;
         v.resize(size);
         rf.fill(v, -100, 100);
-        mergesort(v, 0, size);
+        mergesort(v);
         if (!std::is_sorted(v.begin(), v.end()))
             return EXIT_FAILURE;
     }
