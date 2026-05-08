@@ -3,6 +3,7 @@
 #include "undirected_graph.h"
 #include <set>
 #include <map>
+#include <queue>
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::map<T, int > obj) {
@@ -15,7 +16,7 @@ std::ostream& operator<<(std::ostream& os, const std::map<T, int > obj) {
 
 template<typename T> requires std::totally_ordered<T>
 class TreeGraph : public UndirectedGraph<T> {
-	T root;
+	T root_;
     std::map<T, int> layerOf_;
 
     friend std::ostream& operator<<(std::ostream& os, const TreeGraph<T>& obj) {
@@ -38,6 +39,31 @@ public:
         }
     }
 
+    TreeGraph(std::set<T> nodes, std::map<T, T> parent, T root)
+        : UndirectedGraph<T>(), root_(std::move(root)) {
+        if (!nodes.contains(root_)) {
+            throw std::invalid_argument("root must be one of the nodes");
+        }
+
+        std::map<T, std::vector<T>> children;
+        for (const auto& [child, par] : parent) {
+            children[par].push_back(child);
+        }
+
+        this->nodes_.insert(root_); 
+
+        std::queue<T> q;
+        q.push(root_);
+        while (!q.empty()) {
+            T current = q.front();
+            q.pop();
+            for (const T& child : children[current]) {
+                add_edge(current, child); 
+                q.push(child);
+            }
+        }
+    }
+
 	using UndirectedGraph<T>::all_edges;
 	using UndirectedGraph<T>::edges_;
 
@@ -56,7 +82,6 @@ public:
         if (this->nodes_.find(to) != this->nodes_.end()) {
             throw std::invalid_argument("to node must not already exist in the tree");
         }
-
 
         layerOf_[to] = layerOf_[from] + 1;
         this->UndirectedGraph<T>::add_edge(from, to);

@@ -35,6 +35,7 @@ public:
 	std::set<T> all_nodes() const;
 	unsigned int edge_number(const UndirectedEdge<T> edge) const;
 	const UndirectedEdge<T>& edge_at(unsigned int i) const;
+	bool has_node(T& target) const;
 
 	/* OPERATORI */
 	UndirectedGraph<T> operator-(const UndirectedGraph<T>& other);
@@ -125,6 +126,11 @@ template<typename T> requires std::totally_ordered<T>
 std::set<T> UndirectedGraph<T>::all_nodes() const {
 	return nodes_;
 };
+
+template<typename T> requires std::totally_ordered<T>
+bool UndirectedGraph<T>::has_node(T& target) const {
+	return nodes_.contains(target);
+}
 
 template <typename T> requires std::totally_ordered<T>
 unsigned int UndirectedGraph<T>::edge_number(const UndirectedEdge<T> edge) const {

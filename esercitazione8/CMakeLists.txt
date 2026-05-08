@@ -10,4 +10,4 @@ enable_testing()
 add_executable(test_graph test_graph.cpp)
 add_test(NAME test_graph COMMAND test_graph)
 
-add_executable(main main.cpp "undirected_graph.h" "undirected_tree.h")
+add_executable(main main.cpp "undirected_graph.h" "undirected_tree.h" "search_graph.h" "dispenser.h" "stack.h" "queue.h")

@@ -196,6 +196,20 @@ public:
         return EXIT_SUCCESS;
     }
 
+    int test_find_nodes() {
+        int a = 1;
+        int b = 2;
+        int c = 3;
+
+        nodes = { a, b };
+        UndirectedGraph graph(nodes);
+
+        if (!graph.has_node(a) || graph.has_node(c))
+            return EXIT_FAILURE;
+
+        return EXIT_SUCCESS;
+    }
+
     // neighours / all_nodes / all_edges
     int test_neighbours_basic() {
         nodes = { 1, 2, 3, 4 };
@@ -401,6 +415,8 @@ int main() {
     cout << "test_add_edge_duplicate" << endl;
     if (t.test_add_edge_symmetry() != EXIT_SUCCESS) return EXIT_FAILURE;
     cout << "test_add_edge_symmetry" << endl;
+    if (t.test_find_nodes() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_find_nodes" << endl;
     if (t.test_neighbours_basic() != EXIT_SUCCESS) return EXIT_FAILURE;
     cout << "test_neighbours_basic" << endl;
     if (t.test_neighbours_isolated_node() != EXIT_SUCCESS) return EXIT_FAILURE;
