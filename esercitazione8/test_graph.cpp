@@ -380,31 +380,48 @@ public:
 int main() {
     UndirectedGraphTest t;
 
+    
     if (t.test_constructor_from_nodes() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_constructor_from_nodes" << endl;
     if (t.test_constructor_from_nodes_empty() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_constructor_from_nodes_empty" << endl;
     if (t.test_constructor_from_edges() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_constructor_from_edges" << endl;
     if (t.test_constructor_from_nodes_and_edges() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_constructor_from_nodes_and_edges" << endl;
     if (t.test_copy_constructor() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_copy_constructor" << endl;
     if (t.test_copy_constructor_independence() != EXIT_SUCCESS) return EXIT_FAILURE;
-
+    cout << "test_copy_constructor_independence" << endl;
     if (t.test_add_edge_by_values() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_add_edge_by_values" << endl;
     if (t.test_add_edge_by_object() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_add_edge_by_object" << endl;
     if (t.test_add_edge_duplicate() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_add_edge_duplicate" << endl;
     if (t.test_add_edge_symmetry() != EXIT_SUCCESS) return EXIT_FAILURE;
-
+    cout << "test_add_edge_symmetry" << endl;
     if (t.test_neighbours_basic() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_neighbours_basic" << endl;
     if (t.test_neighbours_isolated_node() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_neighbours_isolated_node" << endl;
     if (t.test_neighbours_symmetry() != EXIT_SUCCESS) return EXIT_FAILURE;
-
+    cout << "test_neighbours_symmetry" << endl;
     if (t.test_edge_number_existing() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_edge_number_existing" << endl;
     if (t.test_edge_number_missing() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_edge_number_missing" << endl;
     if (t.test_edge_at_valid_index() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_edge_at_valid_index" << endl;
     if (t.test_edge_at_out_of_range() != EXIT_SUCCESS) return EXIT_FAILURE;
-
+    cout << "test_edge_at_out_of_range" << endl;
     if (t.test_operator_minus_basic() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_operator_minus_basic" << endl;
     if (t.test_operator_minus_empty_result() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_operator_minus_empty_result" << endl;
     if (t.test_operator_minus_no_overlap() != EXIT_SUCCESS) return EXIT_FAILURE;
+    cout << "test_operator_minus_no_overlap" << endl;
     if (t.test_operator_minus_does_not_modify_operands() != EXIT_SUCCESS) return EXIT_FAILURE;
-
+    cout << "test_operator_minus_does_not_modify_operands" << endl;
     return EXIT_SUCCESS;
 }

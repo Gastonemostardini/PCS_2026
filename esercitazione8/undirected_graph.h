@@ -6,6 +6,10 @@
 template<typename T> requires std::totally_ordered<T>
 class UndirectedGraph
 {
+	template<typename U> requires std::totally_ordered<U>
+	friend class TreeGraph;
+
+protected:
 	std::set<T> nodes_;
 	std::set<UndirectedEdge<T>> edges_;
 
@@ -60,8 +64,8 @@ UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes) {
 
 template<typename T> requires std::totally_ordered<T>
 UndirectedGraph<T>::UndirectedGraph(std::set<UndirectedEdge<T>> edges) {
-	edges_ = edges;
 	for (auto edge : edges) {
+		add_edge(edge);
 		nodes_.insert(edge.from());
 		nodes_.insert(edge.to());
 	}
@@ -70,32 +74,29 @@ UndirectedGraph<T>::UndirectedGraph(std::set<UndirectedEdge<T>> edges) {
 template<typename T> requires std::totally_ordered<T>
 UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes, std::set<UndirectedEdge<T>> edges) {
 	nodes_ = nodes;
-	edges_ = edges;
+
+	for (auto edge : edges) {
+		add_edge(edge);
+	}
+
 	for (auto node : nodes_) {
 		if (neighours(node).empty()) {
 			add_edge(node, node);
 		}
-	}
-
-	for (auto edge : edges) {
-		nodes_.insert(edge.from());
-		nodes_.insert(edge.to());
 	}
 };
 
 template<typename T> requires std::totally_ordered<T>
 UndirectedGraph<T>::UndirectedGraph(const UndirectedGraph& other) {
 	nodes_ = other.nodes_;
-	edges_ = other.edges_;
+	for (auto edge : other.edges_) {
+		add_edge(edge);
+	}
+
 	for (auto node : nodes_) {
 		if (neighours(node).empty()) {
 			add_edge(node, node);
 		}
-	}
-
-	for (auto edge : edges_) {
-		nodes_.insert(edge.from());
-		nodes_.insert(edge.to());
 	}
 };
 
@@ -112,10 +113,8 @@ std::set<T> UndirectedGraph<T>::neighours(T value) const {
 
 template<typename T> requires std::totally_ordered<T>
 void UndirectedGraph<T>::add_edge(T from, T to) {
-	nodes_.insert(from);
-	nodes_.insert(to);
 	UndirectedEdge edge(from, to);
-	edges_.insert(edge);
+	add_edge(edge);
 };
 
 template<typename T> requires std::totally_ordered<T>
