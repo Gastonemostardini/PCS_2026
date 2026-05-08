@@ -11,7 +11,12 @@ class UndirectedGraph
 
 protected:
 	std::set<T> nodes_;
-	std::set<UndirectedEdge<T>> edges_;
+	std::set<UndirectedEdge<T>> edges_; 
+	UndirectedGraph() = default;
+
+	void normalize();
+
+	void fixIsolated();
 
 	friend std::ostream& operator<< <>(std::ostream& os, const UndirectedGraph<T>& obj);
 
@@ -24,12 +29,12 @@ public:
 
 	/* FUNZIONI */ 
 	void add_edge(T from, T to);
-	void add_edge(UndirectedEdge<T>);
+	void add_edge(UndirectedEdge<T> edge);
 	std::set<T> neighours(T value) const;
 	std::set<UndirectedEdge<T>> all_edges() const;
 	std::set<T> all_nodes() const;
 	unsigned int edge_number(const UndirectedEdge<T> edge) const;
-	const UndirectedEdge<T> edge_at(unsigned int i);
+	const UndirectedEdge<T>& edge_at(unsigned int i) const;
 
 	/* OPERATORI */
 	UndirectedGraph<T> operator-(const UndirectedGraph<T>& other);
@@ -57,17 +62,13 @@ std::ostream& operator<<(std::ostream& os, const UndirectedGraph<T>& obj) {
 template<typename T> requires std::totally_ordered<T>
 UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes) {
 	nodes_ = nodes;
-	for (auto node : nodes_) {
-		add_edge(node, node);
-	}
+	normalize();
 };
 
 template<typename T> requires std::totally_ordered<T>
 UndirectedGraph<T>::UndirectedGraph(std::set<UndirectedEdge<T>> edges) {
 	for (auto edge : edges) {
 		add_edge(edge);
-		nodes_.insert(edge.from());
-		nodes_.insert(edge.to());
 	}
 };
 
@@ -79,11 +80,7 @@ UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes, std::set<UndirectedEdge<T
 		add_edge(edge);
 	}
 
-	for (auto node : nodes_) {
-		if (neighours(node).empty()) {
-			add_edge(node, node);
-		}
-	}
+	normalize();
 };
 
 template<typename T> requires std::totally_ordered<T>
@@ -92,12 +89,7 @@ UndirectedGraph<T>::UndirectedGraph(const UndirectedGraph& other) {
 	for (auto edge : other.edges_) {
 		add_edge(edge);
 	}
-
-	for (auto node : nodes_) {
-		if (neighours(node).empty()) {
-			add_edge(node, node);
-		}
-	}
+	normalize();
 };
 
 template<typename T> requires std::totally_ordered<T>
@@ -144,7 +136,7 @@ unsigned int UndirectedGraph<T>::edge_number(const UndirectedEdge<T> edge) const
 }
 
 template <typename T> requires std::totally_ordered<T>
-const UndirectedEdge<T> UndirectedGraph<T>::edge_at(unsigned int i) {
+const UndirectedEdge<T>& UndirectedGraph<T>::edge_at(unsigned int i) const {
 	if (i >= edges_.size()) {
 		throw std::out_of_range("edge index out of range");
 	}
@@ -152,6 +144,21 @@ const UndirectedEdge<T> UndirectedGraph<T>::edge_at(unsigned int i) {
 	std::advance(it, i);
 	return *it;
 };
+
+
+template <typename T> requires std::totally_ordered<T>
+void UndirectedGraph<T>::normalize() {
+	fixIsolated();
+}
+
+template <typename T> requires std::totally_ordered<T>
+void UndirectedGraph<T>::fixIsolated() {
+	for (auto node : nodes_) {
+		if (neighours(node).empty()) {
+			add_edge(node, node);
+		}
+	}
+}
 
 template <typename T> requires std::totally_ordered<T>
 UndirectedGraph<T> UndirectedGraph<T>::operator-(const UndirectedGraph<T>& other) {

@@ -3,6 +3,7 @@
 #include <set>
 #include "undirected_edge.h"
 #include "undirected_graph.h"
+#include "undirected_tree.h"
 
 using namespace std;
 
@@ -11,28 +12,16 @@ int main() {
     int b = 4;
     int c = 5;
 
-    UndirectedEdge<int> ua(a, b);
-    UndirectedEdge<int> ub(b, c);
-    UndirectedEdge<int> uc(a, c);
+    UndirectedEdge<int> ua(a, c);
+    UndirectedEdge<int> ub(a, 23);
+    UndirectedEdge<int> uc(c, 89);
 
-    set<int> nodes = { c, 86 };
-    set<UndirectedEdge<int>> edges = { ub, ub, uc };
-    set<UndirectedEdge<int>> edges2 = { ub };
+    set<int> nodes = { 1 };
+    set<UndirectedEdge<int>> edges = { ua, ub, uc };
 
-    UndirectedGraph<int> graph(nodes);
-    UndirectedGraph<int> graph2(edges);
-    UndirectedGraph<int> graph3(nodes, edges2);
+    TreeGraph<int> graph(nodes, edges);
+    graph.add_edge(23, 9);
     cout << graph << endl;
-
-    //graph.add_edge(1, 1);
-    UndirectedEdge aaaa(1, 3);
-    graph.add_edge(aaaa);
-    UndirectedGraph<int> graph4 = graph - graph2;
-    cout << graph << endl;
-    cout << graph2 << endl;
-    cout << graph3 << endl;
-    cout << graph4 << endl;
-
 
     return 0;
 }
