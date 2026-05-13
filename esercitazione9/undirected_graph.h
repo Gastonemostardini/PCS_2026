@@ -30,6 +30,7 @@ public:
 	/* FUNZIONI */ 
 	void add_edge(T from, T to);
 	void add_edge(UndirectedEdge<T> edge);
+	void remove_node(T node);
 	std::set<T> neighours(T value) const;
 	std::set<UndirectedEdge<T>> all_edges() const;
 	std::set<T> all_nodes() const;
@@ -115,6 +116,15 @@ void UndirectedGraph<T>::add_edge(UndirectedEdge<T> edge) {
 	nodes_.insert(edge.from());
 	nodes_.insert(edge.to());
 	edges_.insert(edge);
+};
+
+template<typename T> requires std::totally_ordered<T>
+void UndirectedGraph<T>::remove_node(T node) {
+	nodes_.erase(node);
+	for (auto edge: edges_){ 
+		if (edge.from() == node || edge.to() == node)
+			edges_.erase(edge);
+	}
 };
 
 template<typename T> requires std::totally_ordered<T>
