@@ -23,7 +23,9 @@ public:
 	/* SEARCH */
 	TreeGraph<T> depth_first_search() const;
 	TreeGraph<T> breadth_first_search() const;
+	TreeGraph<T> search(Dispenser<std::pair<T, T>>& dispenser) const;
 	TreeGraph<T> search(Dispenser<T>& dispenser) const;
+
 };
 
 template<typename T> requires std::totally_ordered<T>
@@ -48,14 +50,39 @@ void SearchGraph<T>::setStart(T start) {
 
 template<typename T> requires std::totally_ordered<T>
 TreeGraph<T> SearchGraph<T>::depth_first_search() const {
-	Lifo<T> lifo;
+	Lifo<std::pair<T, T>> lifo;
 	return search(lifo);
 };
 
 template<typename T> requires std::totally_ordered<T>
 TreeGraph<T> SearchGraph<T>::breadth_first_search() const {
-	Fifo<T> fifo;
+	Fifo<std::pair<T, T>> fifo;
 	return search(fifo);
+};
+
+template<typename T> requires std::totally_ordered<T>
+TreeGraph<T> SearchGraph<T>::search(Dispenser<std::pair<T, T>>& dispenser) const {
+	std::set<T> reached_nodes;
+	std::map<T, T> parent;  // parent[child] = padre nell'albero di ricerca
+
+	dispenser.put({ start_, start_ });
+
+	while (!dispenser.empty()) {
+		auto [actual, pusher] = dispenser.get();
+
+		if (reached_nodes.contains(actual)) continue;
+		reached_nodes.insert(actual);
+		if (actual != start_) parent[actual] = pusher;
+
+		auto neighbours = graph_.neighours(actual);
+		for (auto it = neighbours.rbegin(); it != neighbours.rend(); ++it) {
+			if (!reached_nodes.contains(*it)) {
+				dispenser.put({ *it, actual });
+			}
+		}
+	}
+
+	return TreeGraph<T>(reached_nodes, parent, start_);
 };
 
 template<typename T> requires std::totally_ordered<T>
@@ -85,26 +112,14 @@ TreeGraph<T> SearchGraph<T>::search(Dispenser<T>& dispenser) const {
 };
 
 template<typename T> requires std::totally_ordered<T>
-TreeGraph<T> graph_visit(UndirectedGraph<T> graph, T start, Dispenser<T>& dispenser) {
+TreeGraph<T> graph_visit(UndirectedGraph<T> graph, T start, Dispenser<std::pair<T, T>>& dispenser) {
 	return SearchGraph(graph, start).search(dispenser);
 };
 
-//template<typename T> requires std::totally_ordered<T>
-//TreeGraph<T> recursive_dfs(UndirectedGraph<T> graph, T start) {
-//	if (graph.all_nodes().size() == 1) {
-//		return TreeGraph(*graph.all_nodes().begin());
-//	}
-//	
-//	TreeGraph<T> result(start);
-//	for (auto neighour: graph.neighours(start)){
-//		UndirectedGraph<T> new_graph = graph;
-//		new_graph.remove_node(start);
-//		std::cout << new_graph << std::endl;
-//		TreeGraph<T> albero = recursive_dfs(new_graph, neighour);
-//		result.add_tree(start, albero);
-//	}
-//	return result;
-//}
+template<typename T> requires std::totally_ordered<T>
+TreeGraph<T> graph_visit(UndirectedGraph<T> graph, T start, Dispenser<T>& dispenser) {
+	return SearchGraph(graph, start).search(dispenser);
+};
 
 template<typename T> requires std::totally_ordered<T>
 void dfs(const UndirectedGraph<T>& graph, T current,
