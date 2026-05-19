@@ -18,8 +18,9 @@ std::ostream& operator<<(std::ostream& os, const std::map<T, int > obj) {
 
 
 
-template<typename T> requires std::totally_ordered<T>
-class TreeGraph : public UndirectedGraph<T> {
+template<typename T, typename EdgeT = UndirectedEdge<T>>
+    requires std::totally_ordered<T>
+class TreeGraph : public UndirectedGraph<T, EdgeT> {
 	T root_;
     std::map<T, int> layerOf_;
 
@@ -28,22 +29,9 @@ class TreeGraph : public UndirectedGraph<T> {
         return parent;
     }
 
-    //friend std::ostream& operator<<(std::ostream& os, const TreeGraph<T>& obj) {
-    //    os << "nodes: \n";
-    //    os << obj.nodes_ << std::endl;
-    //    os << "edges: \n";
-    //    os << obj.edges_ << std::endl;
-    //    os << "layer: \n";
-    //    os << obj.layerOf_ << std::endl;
-    //    return os;
-    //};
+    friend std::ostream& operator<<(std::ostream& os, const TreeGraph<T, EdgeT>& obj) {
+        auto parent = const_cast<TreeGraph<T, EdgeT>&>(obj).get_parent();
 
-    friend std::ostream& operator<<(std::ostream& os, const TreeGraph<T>& obj) {
-        // Ricava la relazione padre->figlio chiamando get_parent()
-        // (non c'è un membro parent_, viene calcolato via BFS)
-        auto parent = const_cast<TreeGraph<T>&>(obj).get_parent();
-
-        // Costruisci la mappa padre -> figli per attraversamento top-down
         std::map<T, std::vector<T>> children;
         for (const auto& [child, par] : parent) {
             children[par].push_back(child);
@@ -93,25 +81,25 @@ protected:
     TreeGraph() = default;
 
 public:
-	using UndirectedGraph<T>::UndirectedGraph;
+	using UndirectedGraph<T, EdgeT>::UndirectedGraph;
 
     TreeGraph(T root)
         : TreeGraph({ root }, {}, root) {
     }
 
-    TreeGraph(std::set<UndirectedEdge<T>> edges)
+    TreeGraph(std::set<EdgeT> edges)
         : TreeGraph(std::set<T>{}, edges) {
     }
 
-    TreeGraph(std::set<T> nodes, std::set<UndirectedEdge<T>> edges)
-        : UndirectedGraph<T>() {
+    TreeGraph(std::set<T> nodes, std::set<EdgeT> edges)
+        : UndirectedGraph<T, EdgeT>() {
         for (const auto& edge : edges) {
             add_edge(edge);
         }
     }
 
     TreeGraph(std::set<T> nodes, std::map<T, T> parent, T root)
-        : UndirectedGraph<T>(), root_(std::move(root)) {
+        : UndirectedGraph<T, EdgeT>(), root_(std::move(root)) {
         if (!nodes.contains(root_)) {
             throw std::invalid_argument("root must be one of the nodes");
         }
@@ -121,7 +109,7 @@ public:
             children[par].push_back(child);
         }
 
-        this->nodes_.insert(root_); 
+        this->nodes_.insert(root_);
 
         std::queue<T> q;
         q.push(root_);
@@ -129,7 +117,7 @@ public:
             T current = q.front();
             q.pop();
             for (const T& child : children[current]) {
-                add_edge(current, child); 
+                add_edge(current, child);
                 q.push(child);
             }
         }
@@ -142,10 +130,10 @@ public:
 
     }
 
-	using UndirectedGraph<T>::all_edges;
-	using UndirectedGraph<T>::edges_;
+	using UndirectedGraph<T, EdgeT>::all_edges;
+	using UndirectedGraph<T, EdgeT>::edges_;
 
-    void add_edge(UndirectedEdge<T> edge) {
+    void add_edge(EdgeT edge) {
         add_edge(edge.from(), edge.to());
     }
 
@@ -162,7 +150,7 @@ public:
         }
 
         layerOf_[to] = layerOf_[from] + 1;
-        this->UndirectedGraph<T>::add_edge(from, to);
+        this->UndirectedGraph<T, EdgeT>::add_edge(from, to);
     }
 
     void fixIsolated() {
@@ -170,9 +158,9 @@ public:
         std::set<T> neighours;
 
         for (auto node : nodes) {
-            if (this->UndirectedGraph<T>::neighours(node).size() == 0 && nodes.size() != 1)
+            if (this->UndirectedGraph<T, EdgeT>::neighours(node).size() == 0 && nodes.size() != 1)
                 throw std::invalid_argument("Only the root alone can have 0 neighours");
-            neighours = this->UndirectedGraph<T>::neighours(node);
+            neighours = this->UndirectedGraph<T, EdgeT>::neighours(node);
             for (auto neighour : neighours) {
                 if (layerOf_[neighour] >= layerOf_[node])
                     throw std::invalid_argument("neighours can only be child");

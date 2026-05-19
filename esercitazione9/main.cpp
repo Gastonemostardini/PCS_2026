@@ -5,6 +5,8 @@
 #include "undirected_graph.h"
 #include "undirected_tree.h"
 #include "search_graph.h"
+#include "weighed_edge.h"
+#include "weighed_graph.h"
 
 using namespace std;
 
@@ -41,13 +43,26 @@ int main() {
     TreeGraph result2 = search_graph.depth_first_search();
 
     Fifo<std::pair<int, int>> fifo;
+    //Fifo<int> fifo;
     TreeGraph result3 = graph_visit(graph, 4, fifo);
 
     Lifo<std::pair<int, int>> lifo;
-    TreeGraph result4 = graph_visit(graph, 4, lifo);
+    //Lifo<int> lifo;
+    TreeGraph result4 = graph_visit(graph, 1, lifo);
 
-    cout << result4 << endl;
-    cout << "GIUSTO" << endl;
-    cout << recursive_dfs(graph, 4) << endl;
+    //cout << "3: " << endl;
+    //cout << result3 << endl;
+    //cout << "4: " << endl;
+    //cout << result4 << endl;
+    //cout << "GIUSTO" << endl;
+    //cout << recursive_dfs(graph, 1) << endl;
+
+
+    WeighedEdge w_e(1,2, 3);
+    cout << w_e << endl;
+    cout << dijkstra(graph, 1) << endl;
+    WeighedGraph<int> graph2({ 1,2,3,4,5 }, { {1,2,1}, {2,3,1}, {4,5,1}, {1,5,100} });
+    cout << dijkstra(graph2, 1) << endl;
+
     return 0;
 }

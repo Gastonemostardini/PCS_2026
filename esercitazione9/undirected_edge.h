@@ -16,8 +16,8 @@ class UndirectedEdge
 public:
 	UndirectedEdge(T from, T to);
 
-	T from();
-	T to();
+	T from() const;
+	T to() const;
 	bool has(T value) const;
 
 	bool operator<(UndirectedEdge<T> const& other) const;
@@ -25,12 +25,12 @@ public:
 };
 
 template<typename T> requires std::totally_ordered<T>
-T UndirectedEdge<T>::from() {
+T UndirectedEdge<T>::from() const{
 	return from_;
 }
 
 template<typename T> requires std::totally_ordered<T>
-T UndirectedEdge<T>::to() {
+T UndirectedEdge<T>::to() const{
 	return to_;
 }
 

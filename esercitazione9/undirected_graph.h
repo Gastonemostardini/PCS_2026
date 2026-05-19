@@ -2,47 +2,55 @@
 #include <ostream>
 #include "undirected_edge.h"
 #include <set>
+#include <utility>
 
-template<typename T> requires std::totally_ordered<T>
+template<typename T, typename EdgeT = UndirectedEdge<T>>
+	requires std::totally_ordered<T>
 class UndirectedGraph
 {
-	template<typename U> requires std::totally_ordered<U>
+	template<typename U, typename EdgeU> requires std::totally_ordered<U>
 	friend class TreeGraph;
 
 protected:
 	std::set<T> nodes_;
-	std::set<UndirectedEdge<T>> edges_; 
+	std::set<EdgeT> edges_;
 	UndirectedGraph() = default;
 
 	void normalize();
 
 	void fixIsolated();
 
-	friend std::ostream& operator<< <>(std::ostream& os, const UndirectedGraph<T>& obj);
+	friend std::ostream& operator<< <>(std::ostream& os, const UndirectedGraph<T, EdgeT>& obj);
 
 public:
 	/* COSTRUTTORI */
 	UndirectedGraph(std::set<T> nodes);
-	UndirectedGraph(std::set<UndirectedEdge<T>> edges);
-	UndirectedGraph(std::set<T> nodes, std::set<UndirectedEdge<T>> edges);
+	UndirectedGraph(std::set<EdgeT> edges);
+	UndirectedGraph(std::set<T> nodes, std::set<EdgeT> edges);
 	UndirectedGraph(const UndirectedGraph& other);
 
-	/* FUNZIONI */ 
+	/* FUNZIONI */
 	void add_edge(T from, T to);
-	void add_edge(UndirectedEdge<T> edge);
+	void add_edge(EdgeT edge);
 	void remove_node(T node);
 	std::set<T> neighours(T value) const;
-	std::set<UndirectedEdge<T>> all_edges() const;
+	std::set<EdgeT> all_edges() const;
 	std::set<T> all_nodes() const;
-	unsigned int edge_number(const UndirectedEdge<T> edge) const;
-	const UndirectedEdge<T>& edge_at(unsigned int i) const;
+	unsigned int edge_number(const EdgeT edge) const;
+	const EdgeT& edge_at(unsigned int i) const;
 	bool has_node(T& target) const;
 
 	/* OPERATORI */
-	UndirectedGraph<T> operator-(const UndirectedGraph<T>& other);
-	bool operator==(const UndirectedGraph<T>& other);
-	bool operator!=(const UndirectedGraph<T>& other);
+	UndirectedGraph<T, EdgeT> operator-(const UndirectedGraph<T, EdgeT>& other);
+	bool operator==(const UndirectedGraph<T, EdgeT>& other);
+	bool operator!=(const UndirectedGraph<T, EdgeT>& other);
 };
+
+template<typename EdgeT>
+UndirectedGraph(std::set<EdgeT>) -> UndirectedGraph<decltype(std::declval<EdgeT>().from()), EdgeT>;
+
+template<typename T, typename EdgeT>
+UndirectedGraph(std::set<T>, std::set<EdgeT>) -> UndirectedGraph<T, EdgeT>;
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::set<T> obj) {
@@ -52,8 +60,8 @@ std::ostream& operator<<(std::ostream& os, const std::set<T> obj) {
 	return os;
 }
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const UndirectedGraph<T>& obj) {
+template<typename T, typename EdgeT>
+std::ostream& operator<<(std::ostream& os, const UndirectedGraph<T, EdgeT>& obj) {
 	os << "nodes: \n";
 	os << obj.nodes_ << std::endl;
 	os << "edges: \n";
@@ -61,21 +69,24 @@ std::ostream& operator<<(std::ostream& os, const UndirectedGraph<T>& obj) {
 	return os;
 }
 
-template<typename T> requires std::totally_ordered<T>
-UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+UndirectedGraph<T, EdgeT>::UndirectedGraph(std::set<T> nodes) {
 	nodes_ = nodes;
 	normalize();
 };
 
-template<typename T> requires std::totally_ordered<T>
-UndirectedGraph<T>::UndirectedGraph(std::set<UndirectedEdge<T>> edges) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+UndirectedGraph<T, EdgeT>::UndirectedGraph(std::set<EdgeT> edges) {
 	for (auto edge : edges) {
 		add_edge(edge);
 	}
 };
 
-template<typename T> requires std::totally_ordered<T>
-UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes, std::set<UndirectedEdge<T>> edges) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+UndirectedGraph<T, EdgeT>::UndirectedGraph(std::set<T> nodes, std::set<EdgeT> edges) {
 	nodes_ = nodes;
 
 	for (auto edge : edges) {
@@ -85,8 +96,9 @@ UndirectedGraph<T>::UndirectedGraph(std::set<T> nodes, std::set<UndirectedEdge<T
 	normalize();
 };
 
-template<typename T> requires std::totally_ordered<T>
-UndirectedGraph<T>::UndirectedGraph(const UndirectedGraph& other) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+UndirectedGraph<T, EdgeT>::UndirectedGraph(const UndirectedGraph& other) {
 	nodes_ = other.nodes_;
 	for (auto edge : other.edges_) {
 		add_edge(edge);
@@ -94,8 +106,9 @@ UndirectedGraph<T>::UndirectedGraph(const UndirectedGraph& other) {
 	normalize();
 };
 
-template<typename T> requires std::totally_ordered<T>
-std::set<T> UndirectedGraph<T>::neighours(T value) const {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+std::set<T> UndirectedGraph<T, EdgeT>::neighours(T value) const {
 	std::set<T> neighours;
 
 	for (auto edge : edges_)
@@ -105,45 +118,52 @@ std::set<T> UndirectedGraph<T>::neighours(T value) const {
 	return neighours;
 };
 
-template<typename T> requires std::totally_ordered<T>
-void UndirectedGraph<T>::add_edge(T from, T to) {
-	UndirectedEdge edge(from, to);
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+void UndirectedGraph<T, EdgeT>::add_edge(T from, T to) {
+	EdgeT edge(from, to);
 	add_edge(edge);
 };
 
-template<typename T> requires std::totally_ordered<T>
-void UndirectedGraph<T>::add_edge(UndirectedEdge<T> edge) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+void UndirectedGraph<T, EdgeT>::add_edge(EdgeT edge) {
 	nodes_.insert(edge.from());
 	nodes_.insert(edge.to());
 	edges_.insert(edge);
 };
 
-template<typename T> requires std::totally_ordered<T>
-void UndirectedGraph<T>::remove_node(T node) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+void UndirectedGraph<T, EdgeT>::remove_node(T node) {
 	nodes_.erase(node);
-	for (auto edge: edges_){ 
+	for (auto edge: edges_){
 		if (edge.from() == node || edge.to() == node)
 			edges_.erase(edge);
 	}
 };
 
-template<typename T> requires std::totally_ordered<T>
-std::set<UndirectedEdge<T>> UndirectedGraph<T>::all_edges() const {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+std::set<EdgeT> UndirectedGraph<T, EdgeT>::all_edges() const {
 	return edges_;
 };
 
-template<typename T> requires std::totally_ordered<T>
-std::set<T> UndirectedGraph<T>::all_nodes() const {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+std::set<T> UndirectedGraph<T, EdgeT>::all_nodes() const {
 	return nodes_;
 };
 
-template<typename T> requires std::totally_ordered<T>
-bool UndirectedGraph<T>::has_node(T& target) const {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+bool UndirectedGraph<T, EdgeT>::has_node(T& target) const {
 	return nodes_.contains(target);
 }
 
-template <typename T> requires std::totally_ordered<T>
-unsigned int UndirectedGraph<T>::edge_number(const UndirectedEdge<T> edge) const {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+unsigned int UndirectedGraph<T, EdgeT>::edge_number(const EdgeT edge) const {
 	auto it = edges_.find(edge);
 	if (it == edges_.end()) {
 		throw std::out_of_range("edge not found");
@@ -151,8 +171,9 @@ unsigned int UndirectedGraph<T>::edge_number(const UndirectedEdge<T> edge) const
 	return static_cast<unsigned int>(std::distance(edges_.begin(), it));
 }
 
-template <typename T> requires std::totally_ordered<T>
-const UndirectedEdge<T>& UndirectedGraph<T>::edge_at(unsigned int i) const {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+const EdgeT& UndirectedGraph<T, EdgeT>::edge_at(unsigned int i) const {
 	if (i >= edges_.size()) {
 		throw std::out_of_range("edge index out of range");
 	}
@@ -162,13 +183,15 @@ const UndirectedEdge<T>& UndirectedGraph<T>::edge_at(unsigned int i) const {
 };
 
 
-template <typename T> requires std::totally_ordered<T>
-void UndirectedGraph<T>::normalize() {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+void UndirectedGraph<T, EdgeT>::normalize() {
 	fixIsolated();
 }
 
-template <typename T> requires std::totally_ordered<T>
-void UndirectedGraph<T>::fixIsolated() {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+void UndirectedGraph<T, EdgeT>::fixIsolated() {
 	for (auto node : nodes_) {
 		if (neighours(node).empty()) {
 			add_edge(node, node);
@@ -176,9 +199,10 @@ void UndirectedGraph<T>::fixIsolated() {
 	}
 }
 
-template <typename T> requires std::totally_ordered<T>
-UndirectedGraph<T> UndirectedGraph<T>::operator-(const UndirectedGraph<T>& other) {
-	std::set<UndirectedEdge<T>> edges = edges_;
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+UndirectedGraph<T, EdgeT> UndirectedGraph<T, EdgeT>::operator-(const UndirectedGraph<T, EdgeT>& other) {
+	std::set<EdgeT> edges = edges_;
 	std::set<T> nodes = nodes_;
 	for (auto edge : other.edges_){
 		edges.erase(edge);
@@ -193,15 +217,17 @@ UndirectedGraph<T> UndirectedGraph<T>::operator-(const UndirectedGraph<T>& other
 	return newObj;
 };
 
-template <typename T> requires std::totally_ordered<T>
-bool UndirectedGraph<T>::operator==(const UndirectedGraph<T>& other) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+bool UndirectedGraph<T, EdgeT>::operator==(const UndirectedGraph<T, EdgeT>& other) {
 	if (all_nodes() != other.all_nodes()) return false;
 	if (all_edges() != other.all_edges()) return false;
 	return true;
 }
 
-template <typename T> requires std::totally_ordered<T>
-bool UndirectedGraph<T>::operator!=(const UndirectedGraph<T>& other) {
+template<typename T, typename EdgeT>
+	requires std::totally_ordered<T>
+bool UndirectedGraph<T, EdgeT>::operator!=(const UndirectedGraph<T, EdgeT>& other) {
 	if (all_nodes() != other.all_nodes()) return true;
 	if (all_edges() != other.all_edges()) return true;
 	return false;
