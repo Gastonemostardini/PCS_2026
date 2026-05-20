@@ -19,10 +19,10 @@ int test_gradiente() {
 
 		A = B.transpose() * B;
 
-		//Eigen::JacobiSVD<Eigen::MatrixXd> svd(A);
-		//const double cond = svd.singularValues()(0) / svd.singularValues()(svd.singularValues().size() - 1);
+		Eigen::JacobiSVD<Eigen::MatrixXd> svd(A);
+		const double cond = svd.singularValues()(0) / svd.singularValues()(svd.singularValues().size() - 1);
 
-		//test_tol = tol * cond;
+		test_tol = tol * cond;
 
 		x_ex = Eigen::VectorXd::Ones(n);
 
