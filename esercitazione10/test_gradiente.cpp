@@ -3,7 +3,7 @@
 #include "gradiente.h"
 
 int test_gradiente() {
-	const double tol = 1.0e-11;
+	const double tol = 1.0e-13;
 	double test_tol = 1;
 	Eigen::MatrixXd B;
 	Eigen::MatrixXd A;
@@ -32,10 +32,8 @@ int test_gradiente() {
 
 		res = Eigen::VectorXd::Zero(n);
 
-		std::cout << n << std::endl;
-		gradiente_cognugato(A, x, b, res, 10000, 10e-13);
-		//std::cout << (res - x_ex).norm() << std::endl;
-
+		gradiente_cognugato(A, x, b, res, 10000, 10e-14);
+		
 		if ((res - x_ex).norm() > test_tol)
 			return EXIT_FAILURE;
 	}
