@@ -9,6 +9,8 @@
 #include "dispenser.h"
 #include "lifo.h"
 #include "fifo.h"
+#include "functions.h"
+#include "cycles.h"
 
 template<typename T, typename EdgeT = Edge<T>>
 	requires std::totally_ordered<T>
@@ -199,10 +201,16 @@ TreeGraph<T, EdgeT> dijkstra(const Graph<T, EdgeT>& graph, T start) {
 	return res;
 }
 
-class Cycles {};
-
-template<typename T, typename EdgeT = Edge<T>>
-	requires std::totally_ordered<T>
-std::list<Cycles> de_pina(const Graph<T, EdgeT>& graph){
-
+template<typename T, typename EdgeT = Edge<T>> requires std::totally_ordered<T>
+std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph){
+	std::list<Cycles<T, EdgeT>> base;
+	int k = graph.all_edges().size() - graph.all_nodes().size() + 1;
+	Cycles<T, EdgeT> ciclo;
+	for (auto i = 0; i < k; i++) {
+		ciclo = depina_helper();
+		base.push_back(ciclo);
+		for (auto j = i + 1; j < k; j++)
+			if 
+	}
+	return base;
 }

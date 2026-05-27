@@ -14,6 +14,19 @@ list(APPEND libraries_list PUBLIC Eigen3::Eigen)
 #add_test(NAME test_gradiente COMMAND test_gradiente)
 
 add_executable(main main.cpp "edge.h" "graph.h" "tree.h" "weighed_edge.h" "weighed_graph.h" "search_graph.h"
-	"dispenser.h" "fifo.h" "lifo.h" "gradiente.h")
+	"dispenser.h" "fifo.h" "lifo.h" "gradiente.h" "functions.h")
 target_link_libraries(main ${libraries_list})
 #target_link_libraries(test_gradiente ${libraries_list})
+
+# Test dei componenti specifici del progetto (cicli / metodo delle maglie)
+add_executable(test_search_graph test_search_graph.cpp)
+add_test(NAME test_search_graph COMMAND test_search_graph)
+
+add_executable(test_cycles test_cycles.cpp)
+add_test(NAME test_cycles COMMAND test_cycles)
+
+add_executable(test_de_pina test_de_pina.cpp)
+add_test(NAME test_de_pina COMMAND test_de_pina)
+
+add_executable(test_functions test_functions.cpp)
+add_test(NAME test_functions COMMAND test_functions)

@@ -8,11 +8,21 @@
 #include "weighed_edge.h"
 #include "weighed_graph.h"
 #include "gradiente.h"
+#include "functions.h"
 #include "Eigen/Eigen"
 
 using namespace std;
 
 int main() {
+    //vector<bool> a(10, true);
+    //vector<bool> b(10, true);
+    //vector<bool> c = a ^ b;
+    //bool d = a * b;
+
+    //cout << c << endl;
+    //cout << d << endl;
+
+
     int a = 1;
     int b = 2;
     int c = 3;
@@ -39,6 +49,10 @@ int main() {
     Graph<int> graph(nodes, edges);
     cout << graph << endl;
 
+    cout << de_pina(graph) << endl;
+
+    return 0;
+    /*
     SearchGraph search_graph(graph, 4);
 
     TreeGraph result = search_graph.breadth_first_search();
@@ -67,6 +81,7 @@ int main() {
     cout << graph2 << endl;
 
     cout << dijkstra(graph2, 1) << endl;
+    */
 
     return 0;
 }
