@@ -27,29 +27,33 @@ int main() {
     int b = 2;
     int c = 3;
     int d = 4;
-    int e = 5;
-    int f = 6;
+    //int e = 5;
+    //int f = 6;
 
-    set<int> nodes = { a, b, c, d, e, f, 7, 8, 9 };
+    set<int> nodes = { a, b, c, d };
     set<Edge<int>> edges = {
         { a, b },
         { a, c },
         { a, d },
-        { a, e },
-        { e, f },
-        { e, b },
-        { c, d },
-        { 7, d },
-        { 7, 8 },
-        { 8, 9 },
-        { 7, 9 },
-        { 7, e },
+        { d, b },
+        //{ e, f },
+        //{ e, b },
+        //{ c, d },
+        //{ 7, d },
+        //{ 7, 8 },
+        //{ 8, 9 },
+        //{ 7, 9 },
+        //{ 7, e },
     };
 
-    Graph<int> graph(nodes, edges);
-    cout << graph << endl;
-    std::vector<Cycles<int, Edge<int>>> S;
-    cout << de_pina(graph, S) << endl;
+    Graph<int> graph(nodes, { {a, b}, {b, d}, {a, d}, { b, c }, { c, d } });
+    //cout << "edges:" << endl;
+    //cout << edges << endl;
+    //cout << "graph:" << endl;
+    //cout << graph << endl;
+    //Cycles<int, Edge<int>> S1(graph.all_edges(), { {a, b}, {b, d}, {a, d}, { b, c }, { c, d } });
+    //std::vector<Cycles<int, Edge<int>>> S = { S1 };
+    cout << de_pina(graph) << endl;
 
     return 0;
     /*
