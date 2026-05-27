@@ -1,10 +1,18 @@
 #pragma once
 #include <ostream>
 #include "edge.h"
+#include "functions.h"
 #include <set>
 #include <utility>
 
 template<typename T, typename EdgeT = Edge<T>>
+	requires std::totally_ordered<T>
+class Graph;
+
+template<typename T, typename EdgeT>
+std::ostream& operator<<(std::ostream& os, const Graph<T, EdgeT>& obj);
+
+template<typename T, typename EdgeT>
 	requires std::totally_ordered<T>
 class Graph
 {
@@ -51,14 +59,6 @@ Graph(std::set<EdgeT>) -> Graph<decltype(std::declval<EdgeT>().from()), EdgeT>;
 
 template<typename T, typename EdgeT>
 Graph(std::set<T>, std::set<EdgeT>) -> Graph<T, EdgeT>;
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const std::set<T> obj) {
-	for (auto elm : obj) {
-		os << elm << " ";
-	}
-	return os;
-}
 
 template<typename T, typename EdgeT>
 std::ostream& operator<<(std::ostream& os, const Graph<T, EdgeT>& obj) {
@@ -128,6 +128,8 @@ void Graph<T, EdgeT>::add_edge(T from, T to) {
 template<typename T, typename EdgeT>
 	requires std::totally_ordered<T>
 void Graph<T, EdgeT>::add_edge(EdgeT edge) {
+	if (edge.from() == edge.to())
+		return;
 	nodes_.insert(edge.from());
 	nodes_.insert(edge.to());
 	edges_.insert(edge);
@@ -192,6 +194,7 @@ void Graph<T, EdgeT>::normalize() {
 template<typename T, typename EdgeT>
 	requires std::totally_ordered<T>
 void Graph<T, EdgeT>::fixIsolated() {
+	return;
 	for (auto node : nodes_) {
 		if (neighbours(node).empty()) {
 			add_edge(node, node);

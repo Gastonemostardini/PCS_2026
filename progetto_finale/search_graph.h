@@ -201,17 +201,111 @@ TreeGraph<T, EdgeT> dijkstra(const Graph<T, EdgeT>& graph, T start) {
 	return res;
 }
 
+
+template<typename T, typename EdgeT = Edge<T>>
+	requires std::totally_ordered<T>
+TreeGraph<T, EdgeT> dijkstra(const Graph<T, EdgeT>& graph, T start, T end) {
+	TreeGraph<T, EdgeT> albero = dijkstra(graph, start);
+	std::map<T, T> precedente = albero.get_parent();
+
+	// risali i padri da end fino a start, ricostruendo il cammino
+	std::set<T> nodi{ end };
+	std::map<T, T> cammino;  // cammino[figlio] = padre
+	T current = end;
+	while (current != start) {
+		auto it = precedente.find(current);
+		if (it == precedente.end())
+			throw std::invalid_argument("end non raggiungibile da start");
+		cammino[current] = it->second;
+		current = it->second;
+		nodi.insert(current);
+	}
+
+	return TreeGraph<T, EdgeT>(nodi, cammino, start);
+}
+
 template<typename T, typename EdgeT = Edge<T>> requires std::totally_ordered<T>
-std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph, std::vector<Cycles<T, EdgeT>> S){
+Cycles<T, EdgeT> depina_helper(const Graph<T, EdgeT>& graph, Cycles<T, EdgeT> S){
+	std::set<Signed<T>> duplicati;
+	std::set<T> all_nodes = graph.all_nodes();
+	std::set<EdgeT> all_edges = graph.all_edges();
+	for (const auto& v : all_nodes) {
+		duplicati.insert({ v, true });   // v⁺
+		duplicati.insert({ v, false });  // v⁻
+	}
+
+	std::set<Edge<Signed<T>>> archi;
+	for (auto edge : all_edges)
+	{
+		if (S.is_active(edge)) {
+			archi.insert({ { edge.from(), true},   { edge.to(), false } });
+			archi.insert({ { edge.from(), false},  { edge.to(), true } });
+		} else {
+			archi.insert({ { edge.from(), true},   { edge.to(), true } });
+			archi.insert({ { edge.from(), false},  { edge.to(), false } });
+		}
+	}
+
+	Graph<Signed<T>, Edge<Signed<T>>> ausiliario(duplicati, archi);
+
+	std::vector<TreeGraph<Signed<T>, Edge<Signed<T>>>> walks;
+	walks.reserve(all_nodes.size());
+	for (auto node : all_nodes)
+		walks.push_back(dijkstra(ausiliario, { node, false }, { node, true }));
+	
+	Cycles<T, EdgeT> best(all_edges);
+	Cycles<T, EdgeT> test(all_edges);
+	Cycles<T, EdgeT> sum(all_edges);
+	for (auto walk : walks){
+		test.clear();
+		Signed<T> actual = walk.get_root();
+		Signed<T> next = walk.get_root();
+		while (!walk.children(actual).empty())
+		{
+			sum.clear();
+			next = walk.children(actual)[0];
+			sum.add_edge({ actual.value, next.value });
+			test += sum;
+			actual = next;
+
+		}
+
+		if (best.weight() == 0 || test.weight() < best.weight())
+			best = test;
+	}
+
+	return best;
+}
+
+template<typename T, typename EdgeT = Edge<T>> requires std::totally_ordered<T>
+std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph) {
+	//std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph, std::vector<Cycles<T, EdgeT>> S){
 	std::list<Cycles<T, EdgeT>> base;
-	int k = graph.all_edges().size() - graph.all_nodes().size() + 1;
-	Cycles<T, EdgeT> ciclo;
+	std::set<EdgeT> all_edges = graph.all_edges();
+	int k = all_edges.size() - graph.all_nodes().size() + 1;
+
+	// albero ricoprente: i suoi archi sono i "tree edges",
+	// i restanti k archi sono i "non-tree edges"
+	TreeGraph<T, EdgeT> tree = recursive_dfs(graph, *graph.all_nodes().begin());
+	std::set<EdgeT> tree_edges = tree.all_edges();
+
+	// k vettori di supporto S_i, ciascuno booleano di lunghezza m,
+	// inizializzati al versore dell'i-esimo arco non-tree
+	std::vector<Cycles<T, EdgeT>> S;
+	S.reserve(k);
+	for (const auto& edge : all_edges)
+		if (!tree_edges.contains(edge))
+			S.push_back(Cycles<T, EdgeT>(all_edges, { edge }));
+
+	Cycles<T, EdgeT> ciclo(all_edges);
 	for (auto i = 0; i < k; i++) {
-		//ciclo = depina_helper();
+		ciclo = depina_helper(graph, S[i]);
+		//std::cout << "i: " << i << ;
 		base.push_back(ciclo);
 		for (auto j = i + 1; j < k; j++)
 			if (ciclo * S[j])
 				S[j] ^= S[i];
 	}
+
 	return base;
 }

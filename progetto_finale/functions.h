@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <set>
+#include <list>
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj) {
@@ -32,6 +34,14 @@ std::ostream& operator<<(std::ostream& os, const std::list<T>& obj) {
     return os;
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::set<T> obj) {
+    for (auto elm : obj) {
+        os << elm << " ";
+    }
+    return os;
+}
+
 bool operator*(std::vector<bool> a, std::vector<bool> b) {
     if (a.size() != b.size()) {
         throw std::invalid_argument("Vector MUST be the same size.");
@@ -47,6 +57,18 @@ bool operator*(std::vector<bool> a, std::vector<bool> b) {
 
 }
 
+std::vector<bool>& operator+=(std::vector<bool>& a, const std::vector<bool>& b) {
+    if (a.size() != b.size()) {
+        throw std::invalid_argument("Vector MUST be the same size.");
+    }
+
+    for (size_t i = 0; i < a.size(); i++) {
+        a[i] = (a[i] + b[i]) % 2;
+    }
+
+    return a;
+}
+
 std::vector<bool> operator^(std::vector<bool> a, std::vector<bool> b) {
 	if (a.size() != b.size()) {
 		throw std::invalid_argument("Vector MUST be the same size.");
@@ -57,4 +79,18 @@ std::vector<bool> operator^(std::vector<bool> a, std::vector<bool> b) {
 		res[i] = a[i] ^ b[i];
 	}
 	return res;
+}
+
+template<typename T>
+struct Signed {
+    T value;
+    bool positive;
+
+    auto operator<=>(const Signed&) const = default;
+};
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const Signed<T>& obj) {
+    os << "(" << obj.value << (obj.positive ? "+" : "-") << ")";
+    return os;
 }

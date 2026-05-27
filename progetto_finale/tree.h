@@ -219,4 +219,19 @@ public:
         }
     }
 
+    std::vector<T> children(T value) const {
+        std::vector<T> neighbours;
+        int base_layer = layerOf_.at(value);
+        for (auto edge : edges_){
+            if (edge.has(value)) {
+                if (edge.from() == value && layerOf_.at(edge.to()) > base_layer)
+                    neighbours.push_back(edge.to());
+                else if (edge.to() == value && layerOf_.at(edge.from()) > base_layer)
+                    neighbours.push_back(edge.from());
+            }
+        }
+
+        return neighbours;
+    };
+
 };
