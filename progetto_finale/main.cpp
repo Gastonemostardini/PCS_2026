@@ -48,8 +48,8 @@ int main() {
 
     Graph<int> graph(nodes, edges);
     cout << graph << endl;
-
-    cout << de_pina(graph) << endl;
+    std::vector<Cycles<int, Edge<int>>> S;
+    cout << de_pina(graph, S) << endl;
 
     return 0;
     /*

@@ -35,8 +35,18 @@ public:
 		return adjacency * other.adjacency;
 	};
 
-	std::vector<bool> operator^(Cycles <T, EdgeT> other) {
+	Cycles<T, EdgeT> operator^(Cycles<T, EdgeT> other) {
 		return adjacency ^ other.adjacency;
+	};
+
+	//Cycles& operator=(Cycles<T, EdgeT> other) {
+	//	adjacency = other.adjacency;
+	//	real_edges = other.real_edges;
+	//};
+
+	Cycles<T, EdgeT>& operator^=(Cycles<T, EdgeT> other) {
+		adjacency = adjacency ^ other.adjacency;
+		return *this;
 	};
 
 };

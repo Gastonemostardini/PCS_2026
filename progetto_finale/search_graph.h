@@ -202,15 +202,16 @@ TreeGraph<T, EdgeT> dijkstra(const Graph<T, EdgeT>& graph, T start) {
 }
 
 template<typename T, typename EdgeT = Edge<T>> requires std::totally_ordered<T>
-std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph){
+std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph, std::vector<Cycles<T, EdgeT>> S){
 	std::list<Cycles<T, EdgeT>> base;
 	int k = graph.all_edges().size() - graph.all_nodes().size() + 1;
 	Cycles<T, EdgeT> ciclo;
 	for (auto i = 0; i < k; i++) {
-		ciclo = depina_helper();
+		//ciclo = depina_helper();
 		base.push_back(ciclo);
 		for (auto j = i + 1; j < k; j++)
-			if 
+			if (ciclo * S[j])
+				S[j] ^= S[i];
 	}
 	return base;
 }
