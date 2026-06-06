@@ -2,6 +2,8 @@
 #include <vector>
 #include <set>
 #include <list>
+#include <Eigen/Dense>
+#include <Eigen/SVD>
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj) {
@@ -99,6 +101,7 @@ output_function(Eigen::MatrixXd B, Eigen::MatrixXd R, Eigen::VectorXd v){
 	for (int i = 0; i < dim; i++) {
         std::cout << "R" << i + 1 << " : V = " << Vr(i) << " volts, I = " << Ir(i) << " amps" << "\n";
     }
+};
 	
 template<typename T>
 struct Signed {
