@@ -85,7 +85,7 @@ public:
 		return std::count(adjacency.begin(), adjacency.end(), true);
 	}
 
-	bool is_active(EdgeT edge) {
+	bool is_active(EdgeT edge) const {
 		std::size_t i = 0;
 		for (const auto& e : real_edges) {
 			if (e == edge) {

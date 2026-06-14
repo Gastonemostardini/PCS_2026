@@ -136,8 +136,7 @@ int main() {
 	
 	int colonna_maglia = 0; 
 	
-	//  auto&  perché is_active() in cycles.h non è const
-	for (auto& ciclo : base_maglie) {
+	for (auto ciclo : base_maglie) {
 		
 		// diamo un verso di percorrenza alla maglia per kirchhoff
 		std::map<Edge<int>, double> orientamento = orienta_maglia(ciclo, graph);
