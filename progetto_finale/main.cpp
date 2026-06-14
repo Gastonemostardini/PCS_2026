@@ -3,6 +3,7 @@
 #include <set>
 #include <map>
 #include <cmath>
+#include <cstdint>
 #include "input.hpp"
 #include "edge.h"
 #include "graph.h"
@@ -19,21 +20,24 @@ using namespace std;
 
 
 // orientare le maglie in un percorso con versi (+1 / -1)
-std::map<Edge<int>, double> orienta_maglia(Cycles<int, Edge<int>>& ciclo, const Graph<int>& graph) {
-	std::map<Edge<int>, double> segni;
+std::map<Edge<int>, std::int8_t> orienta_maglia(Cycles<int, Edge<int>>& ciclo, const Graph<int>& graph) {
+	std::map<Edge<int>, std::int8_t> segni;
 	std::vector<Edge<int>> rami;
 	
 	
 	for (auto e : graph.all_edges()) {   // estraiamo solo i rami di questa maglia
 		if (ciclo.is_active(e)) rami.push_back(e);
 	}
+
+	// Tirare fuori qualche genere di errore
 	if (rami.empty()) return segni;
 
-	
+
+	// Questa potremmo estrarla 
 	std::map<int, std::vector<Edge<int>>> adj;      // mappa di adiacenza per i rami del ciclo
-	for (auto e : rami) {
-		adj[e.from()].push_back(e);
-		adj[e.to()].push_back(e);
+	for (auto ramo : rami) {
+		adj[ramo.from()].push_back(ramo);
+		adj[ramo.to()].push_back(ramo);
 	}
 
 	// percorriamo il ciclo
@@ -43,10 +47,10 @@ std::map<Edge<int>, double> orienta_maglia(Cycles<int, Edge<int>>& ciclo, const 
 
 	while (true) {
 		if (current_edge.from() == current_node) {
-			segni[current_edge] = 1.0;
+			segni[current_edge] = 1;
 			current_node = current_edge.to();
 		} else {
-			segni[current_edge] = -1.0;
+			segni[current_edge] = -1;
 			current_node = current_edge.from();
 		}
 
@@ -60,6 +64,7 @@ std::map<Edge<int>, double> orienta_maglia(Cycles<int, Edge<int>>& ciclo, const 
 			}
 		}
 	}
+
 	return segni;
 }
 
@@ -76,7 +81,6 @@ int main() {
 	if (!parser.check_validity()) {
 		return EXIT_FAILURE;
 	}
-
 	
 	parser.clean_graph();              //  rami aperti e isolati
 	parser.print_status();
@@ -138,7 +142,8 @@ int main() {
 	for (auto ciclo : base_maglie) {
 		
 		// diamo un verso di percorrenza alla maglia per kirchhoff
-		std::map<Edge<int>, double> orientamento = orienta_maglia(ciclo, graph);
+		// i versi sono solo +1 / 0 / -1, quindi basta un int8_t
+		std::map<Edge<int>, std::int8_t> orientamento = orienta_maglia(ciclo, graph);
 
 		for (const auto& arco : graph.all_edges()) {
 			
@@ -147,13 +152,13 @@ int main() {
 				unsigned int riga_ramo = graph.edge_number(arco);
 				Component comp = parser.find_component(arco.from(), arco.to());
 				
-				double verso_percorrenza = orientamento[arco];
+				int verso_percorrenza = orientamento[arco];
 				B(riga_ramo, colonna_maglia) = verso_percorrenza;
 
 				// se su questo ramo c'è un generatore, gestiamo i segni
 				if (comp.type == 'V') {
-					int nodo_partenza = (verso_percorrenza == 1.0) ? arco.from() : arco.to();
-					int nodo_arrivo   = (verso_percorrenza == 1.0) ? arco.to() : arco.from();
+					int nodo_partenza = (verso_percorrenza == 1) ? arco.from() : arco.to();
+					int nodo_arrivo   = (verso_percorrenza == 1) ? arco.to() : arco.from();
 
 					// salita di potenziale
 					if (nodo_partenza == comp.nodeB && nodo_arrivo == comp.nodeA) {
