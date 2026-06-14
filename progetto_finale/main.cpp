@@ -18,57 +18,6 @@
 
 using namespace std;
 
-
-// orientare le maglie in un percorso con versi (+1 / -1)
-std::map<Edge<int>, std::int8_t> orienta_maglia(Cycles<int, Edge<int>>& ciclo, const Graph<int>& graph) {
-	std::map<Edge<int>, std::int8_t> segni;
-	std::vector<Edge<int>> rami;
-	
-	
-	for (auto e : graph.all_edges()) {   // estraiamo solo i rami di questa maglia
-		if (ciclo.is_active(e)) rami.push_back(e);
-	}
-
-	// Tirare fuori qualche genere di errore
-	if (rami.empty()) return segni;
-
-
-	// Questa potremmo estrarla 
-	std::map<int, std::vector<Edge<int>>> adj;      // mappa di adiacenza per i rami del ciclo
-	for (auto ramo : rami) {
-		adj[ramo.from()].push_back(ramo);
-		adj[ramo.to()].push_back(ramo);
-	}
-
-	// percorriamo il ciclo
-	int current_node = rami[0].from();
-	Edge<int> current_edge = rami[0];
-	int start_node = current_node;
-
-	while (true) {
-		if (current_edge.from() == current_node) {
-			segni[current_edge] = 1;
-			current_node = current_edge.to();
-		} else {
-			segni[current_edge] = -1;
-			current_node = current_edge.from();
-		}
-
-		if (current_node == start_node) break;
-
-		// prossimo ramo
-		for (auto e : adj[current_node]) {
-			if (segni.find(e) == segni.end()) {
-				current_edge = e;
-				break;
-			}
-		}
-	}
-
-	return segni;
-}
-
-
 int main() {
 	cout << "=== Lettura e pulizia del circuito ===\n";
 	input parser;
