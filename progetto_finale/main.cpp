@@ -85,26 +85,24 @@ int main() {
 	
 	cout << "\n=== esrtazione maglie con De Pina e DFS ===\n";
 	
-	// De pina
-	std::list<Cycles<int, Edge<int>>> maglie_depina = de_pina(graph);
-	cout << "De Pina - maglie fondamentali trovate: " << maglie_depina.size() << "\n";
-
-	// Dfs
-	int nodo_radice = *graph.all_nodes().begin();
-	TreeGraph<int, Edge<int>> albero_dfs = recursive_dfs(graph, nodo_radice);
-	std::list<Cycles<int, Edge<int>>> maglie_dfs = find_minimal_cycles(graph, albero_dfs);
-	cout << "DFS - maglie fondamentali trovate: " << maglie_dfs.size() << "\n";
-
-	
-	
 	bool usa_de_pina = true;    // cambiare 'usa_de_pina' in 'false' per usare DFS
 	
 	std::list<Cycles<int, Edge<int>>> base_maglie;
-
+	
 	if (usa_de_pina) {
+		// De pina
+		std::list<Cycles<int, Edge<int>>> maglie_depina = de_pina(graph);
+		cout << "De Pina - maglie fondamentali trovate: " << maglie_depina.size() << "\n";
+		
 		cout << "-> SCELTA: Il sistema verra' risolto usando le maglie di DE PINA.\n";
 		base_maglie = maglie_depina;
 	} else {
+		// Dfs
+		int nodo_radice = *graph.all_nodes().begin();
+		TreeGraph<int, Edge<int>> albero_dfs = recursive_dfs(graph, nodo_radice);
+		std::list<Cycles<int, Edge<int>>> maglie_dfs = find_minimal_cycles(graph, albero_dfs);
+		cout << "DFS - maglie fondamentali trovate: " << maglie_dfs.size() << "\n";
+
 		cout << "-> SCELTA: Il sistema verra' risolto usando le maglie della DFS.\n";
 		base_maglie = maglie_dfs;
 	}
