@@ -14,7 +14,7 @@ list(APPEND libraries_list PUBLIC Eigen3::Eigen)
 #add_test(NAME test_gradiente COMMAND test_gradiente)
 
 add_executable(main main.cpp "edge.h" "graph.h" "tree.h" "weighed_edge.h" "weighed_graph.h" "search_graph.h"
-	"dispenser.h" "fifo.h" "lifo.h" "gradiente.h" "functions.h")
+	"dispenser.h" "fifo.h" "lifo.h" "functions.h")
 target_link_libraries(main ${libraries_list})
 #target_link_libraries(test_gradiente ${libraries_list})
 

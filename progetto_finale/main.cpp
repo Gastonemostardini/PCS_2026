@@ -11,7 +11,6 @@
 #include "cycles.h"
 #include "weighed_edge.h"
 #include "weighed_graph.h"
-#include "gradiente.h"
 #include "functions.h"
 #include "Eigen/Eigen"
 #include "dfs_project.h"
@@ -175,11 +174,25 @@ int main() {
 	cout << "\n=== soluzione sistema ===\n";
 	
 	
-	// risoluzione sistema 
+	// risoluzione sistema
 	Eigen::MatrixXd A = B.transpose() * R * B;
-	Eigen::VectorXd x0 = Eigen::VectorXd::Zero(k);  // punto di partenza: vettore zero
 	Eigen::VectorXd I_maglie;
-	gradiente_cognugato(A, x0, v, I_maglie);
+
+	// Tentiamo la decomposizione di Cholesky (LLT): riesce (info() == Success)
+	// solo se A e' simmetrica definita positiva. In tal caso risolviamo in modo
+	// diretto e stabile; altrimenti ripieghiamo sul Gradiente Coniugato.
+	Eigen::LLT<Eigen::MatrixXd> chol(A);
+	if (chol.info() == Eigen::Success) {
+		cout << "A e' definita positiva: risoluzione con Cholesky (LLT).\n";
+		I_maglie = chol.solve(v);
+	} else {
+		cout << "A non e' definita positiva: ripiego sul Gradiente Coniugato.\n";
+		Eigen::VectorXd x0 = Eigen::VectorXd::Zero(k);  // punto di partenza: vettore zero
+		Eigen::ConjugateGradient<Eigen::MatrixXd, Eigen::Lower | Eigen::Upper> cg;
+		cg.compute(A);
+		I_maglie = cg.solveWithGuess(v, x0);
+	}
+
 	Eigen::VectorXd I_rami = B * I_maglie;
 	Eigen::VectorXd V_rami = R * I_rami;
 
