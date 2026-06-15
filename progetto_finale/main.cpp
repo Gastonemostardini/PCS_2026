@@ -21,13 +21,15 @@ using namespace std;
 
 // UNICO PUNTO in cui si decide il tipo dei nodi del circuito.
 // Cambiando SOLO questa riga (es. in int) il tipo si propaga ovunque.
-using NodeType = pair<int, string>;
 // using NodeType = int;
+using NodeType = pair<int, string>;
 using EdgeType = Edge<NodeType>;
 using CycleType = Cycles<NodeType, EdgeType>;
 
 int main()
 {
+	bool usa_de_pina = true; // cambiare 'usa_de_pina' in 'false' per usare DFS
+
 	input<NodeType> parser;
 	string nome_file = "testinputPIS.txt";
 
@@ -36,63 +38,47 @@ int main()
 	{
 		return EXIT_FAILURE;
 	}
+
 	parser.clean_graph(); //  rami aperti e isolati
 	parser.print_status();
-
 	Graph<NodeType> graph = parser.get_graph(); // otteniamo il grafo
 
-	cout << "\n=== estrazione delle maglie ===\n";
-
-	bool usa_de_pina = false; // cambiare 'usa_de_pina' in 'false' per usare DFS
 
 	std::list<CycleType> base_maglie;
-
 	if (usa_de_pina)
 	{
-		cout << "-> Il sistema verra' risolto usando le maglie di DE PINA.\n";
-
-		// De pina
 		base_maglie = de_pina(graph);
-		// cout << "De Pina - maglie fondamentali trovate: " << base_maglie.size() << "\n";
 	}
 	else
 	{
-		cout << "-> Il sistema verra' risolto usando le maglie della DFS.\n";
-
-		// Dfs
 		NodeType nodo_radice = *graph.all_nodes().begin();
 		TreeGraph<NodeType, EdgeType> albero_dfs = recursive_dfs(graph, nodo_radice);
 		base_maglie = find_minimal_cycles(graph, albero_dfs);
-		// cout << "DFS - maglie fondamentali trovate: " << base_maglie.size() << "\n";
 	}
 
-	cout << "\n=== Matrici ===\n";
 
+	// Costruzione delle matrici 
 	CircuitMatrices mats = build_matrices(graph, base_maglie, parser);
-
-	cout << "\n=== soluzione sistema ===\n";
+	Eigen::MatrixXd A = mats.B.transpose() * mats.R * mats.B;
 
 	// risoluzione sistema
-	Eigen::MatrixXd A = mats.B.transpose() * mats.R * mats.B;
 	Eigen::VectorXd I_maglie;
 
 	// Tentiamo la decomposizione di Cholesky (LLT): riesce (info() == Success)
-	// solo se A e' simmetrica definita positiva. In tal caso risolviamo in modo
-	// diretto e stabile; altrimenti ripieghiamo sul Gradiente Coniugato.
+	// solo se A e' simmetrica definita positiva.
 	Eigen::LLT<Eigen::MatrixXd> chol(A);
 	if (chol.info() == Eigen::Success)
 	{
-		cout << "A e' definita positiva: risoluzione con Cholesky (LLT).\n";
 		I_maglie = chol.solve(mats.v);
 	}
 	else
 	{
-		cout << "A non e' definita positiva: ripiego sul Gradiente Coniugato.\n";
 		Eigen::VectorXd x0 = Eigen::VectorXd::Zero(mats.B.cols()); // punto di partenza: vettore zero
 		Eigen::ConjugateGradient<Eigen::MatrixXd, Eigen::Lower | Eigen::Upper> cg;
 		cg.compute(A);
 		I_maglie = cg.solveWithGuess(mats.v, x0);
 	}
+
 
 	Eigen::VectorXd I_rami = mats.B * I_maglie;
 	Eigen::VectorXd V_rami = mats.R * I_rami;
@@ -114,7 +100,7 @@ int main()
 			if (std::abs(v_branch) < 1e-10)
 				v_branch = 0.0;
 
-			cout << comp.id << ": V = " << v_branch << " volts \tI = " << i_branch << " amps\n";
+			cout << "V(" << comp.id << ") = " << v_branch << " V \tI = " << i_branch << " A\n";
 		}
 	}
 
