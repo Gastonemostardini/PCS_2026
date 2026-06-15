@@ -30,7 +30,7 @@ template <typename T>
 std::ostream &operator<<(std::ostream &os, const Component<T> &comp)
 {
 	os << comp.id << " (" << comp.value
-	   << ") connette " << comp.nodeA << " e " << comp.nodeB;
+	   << ")\tconnette " << comp.nodeA << " e " << comp.nodeB;
 
 	return os;
 }
@@ -104,7 +104,7 @@ public:
 	// 2. no parallelo
 	bool check_validity() const
 	{
-		// numero componenti  tra due nodi
+		// numero componenti tra due nodi
 		// Chiave: pair(nodo_min, nodo_max), Valore: conteggio
 		std::map<std::pair<T, T>, int> connections;
 
@@ -113,7 +113,7 @@ public:
 			std::pair<T, T> edge = {comp.getMinNode(), comp.getMaxNode()};
 			connections[edge]++;
 
-			if (connections[edge] > 1)
+			if (connections.at(edge) > 1)
 			{
 				std::cerr << "Errore: questa configurazione non è consentita "
 						  << edge.first << " e " << edge.second << "!\n";
@@ -137,7 +137,7 @@ public:
 			for (const auto &comp : all_components)
 			{
 				// un componente sopravvive solo se entrambi i suoi nodi hanno deg >1
-				if (degrees[comp.nodeA] > 1 && degrees[comp.nodeB] > 1)
+				if (degrees.at(comp.nodeA) > 1 && degrees.at(comp.nodeB) > 1)
 				{
 					active_components.push_back(comp);
 				}
@@ -160,9 +160,6 @@ public:
 			}
 		}
 	}
-
-	const std::vector<Component<T>> &get_components() const { return all_components; }
-	const std::set<T> &get_nodes() const { return unique_nodes; }
 
 	// 4. generazione del grafo
 	Graph<T> get_graph() const
@@ -198,7 +195,7 @@ public:
 
 	void print_status() const
 	{
-		std::cout << "--- Stato Corrente del Circuito ---\n";
+		std::cout << "---- Stato Corrente del Circuito ----\n";
 		std::cout << "Nodi attivi: ";
 		for (T n : unique_nodes)
 			std::cout << n << " ";
@@ -208,6 +205,6 @@ public:
 		{
 			std::cout << comp << "\n";
 		}
-		std::cout << "-----------------------------------\n";
+		std::cout << "-------------------------------------\n";
 	}
 };

@@ -26,49 +26,42 @@ using CycleType = Cycles<NodeType, EdgeType>;
 
 int main()
 {
-	cout << "=== Lettura e pulizia del circuito ===\n";
 	input<NodeType> parser;
-	string nome_file = "testinput.txt";
-
-	if (!parser.parse_file(nome_file))
+	string nome_file = "testinputPIS.txt";
+	
+	cout << "=== Lettura e pulizia del circuito ===\n";
+	if (!(parser.parse_file(nome_file)) && parser.check_validity())
 	{
 		return EXIT_FAILURE;
 	}
-
-	if (!parser.check_validity())
-	{
-		return EXIT_FAILURE;
-	}
-
 	parser.clean_graph(); //  rami aperti e isolati
 	parser.print_status();
+
 	Graph<NodeType> graph = parser.get_graph(); // otteniamo il grafo
 
-	cout << "\n=== esrtazione maglie con De Pina e DFS ===\n";
+	cout << "\n=== estrazione delle maglie ===\n";
 
 	bool usa_de_pina = true; // cambiare 'usa_de_pina' in 'false' per usare DFS
 
 	std::list<CycleType> base_maglie;
-
+	
 	if (usa_de_pina)
 	{
+		cout << "-> Il sistema verra' risolto usando le maglie di DE PINA.\n";
+		
 		// De pina
-		std::list<CycleType> maglie_depina = de_pina(graph);
-		cout << "De Pina - maglie fondamentali trovate: " << maglie_depina.size() << "\n";
-
-		cout << "-> SCELTA: Il sistema verra' risolto usando le maglie di DE PINA.\n";
-		base_maglie = maglie_depina;
+		base_maglie = de_pina(graph);
+		// cout << "De Pina - maglie fondamentali trovate: " << base_maglie.size() << "\n";
 	}
 	else
 	{
+		cout << "-> Il sistema verra' risolto usando le maglie della DFS.\n";
+
 		// Dfs
 		NodeType nodo_radice = *graph.all_nodes().begin();
 		TreeGraph<NodeType, EdgeType> albero_dfs = recursive_dfs(graph, nodo_radice);
-		std::list<CycleType> maglie_dfs = find_minimal_cycles(graph, albero_dfs);
-		cout << "DFS - maglie fondamentali trovate: " << maglie_dfs.size() << "\n";
-
-		cout << "-> SCELTA: Il sistema verra' risolto usando le maglie della DFS.\n";
-		base_maglie = maglie_dfs;
+		base_maglie = find_minimal_cycles(graph, albero_dfs);
+		// cout << "DFS - maglie fondamentali trovate: " << base_maglie.size() << "\n";
 	}
 
 	cout << "\n=== Matrici ===\n";
@@ -80,11 +73,9 @@ int main()
 	Eigen::MatrixXd R = Eigen::MatrixXd::Zero(m, m);
 	Eigen::VectorXd v = Eigen::VectorXd::Zero(k);
 
-	cout << "  - Matrice incidenza B (rami x maglie): " << m << "x" << k << "\n";
-	cout << "  - Matrice resistenza R (rami x rami):  " << m << "x" << m << "\n";
-	cout << "  - Vettore generatori v (Maglie x 1):   " << k << "x1\n";
-
-	cout << "\n=== Matrici ===\n";
+	cout << " Matrice incidenza B (rami x maglie):\t" << B.rows() << "x" << B.cols() << "\n";
+	cout << " Matrice resistenza R (rami x rami): \t" << R.rows() << "x" << R.cols() << "\n";
+	cout << " Vettore generatori v (Maglie x 1):  \t" << v.rows() << "x" << v.cols() << "\n";
 
 	// R
 	for (const auto &arco : graph.all_edges())
@@ -141,8 +132,6 @@ int main()
 		colonna_maglia++; // passiamo ad analizzare la maglia successiva
 	}
 
-	cout << "Matrici create con successo.\n";
-
 	cout << "\n=== soluzione sistema ===\n";
 
 	// risoluzione sistema
@@ -187,7 +176,7 @@ int main()
 			if (std::abs(v_branch) < 1e-10)
 				v_branch = 0.0;
 
-			cout << comp.id << " : V = " << v_branch << " volts, I = " << i_branch << " amps\n";
+			cout << comp.id << ": V = " << v_branch << " volts \tI = " << i_branch << " amps\n";
 		}
 	}
 
