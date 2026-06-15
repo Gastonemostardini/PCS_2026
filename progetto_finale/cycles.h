@@ -12,7 +12,7 @@ class Cycles
 {
 
 	std::vector<bool> adjacency;
-	std::set<Edge<int>> real_edges;
+	std::set<Edge<T>> real_edges;
 	friend std::ostream &operator<<(std::ostream &os, const Cycles &obj)
 	{
 		// os << obj.adjacency;
@@ -35,7 +35,7 @@ class Cycles
 	}
 
 public:
-	Cycles(std::set<Edge<int>> input_edges, std::set<Edge<int>> edges)
+	Cycles(std::set<Edge<T>> input_edges, std::set<Edge<T>> edges)
 		: adjacency(input_edges.size(), false), real_edges(input_edges)
 	{
 		std::size_t i = 0;
@@ -49,7 +49,7 @@ public:
 		}
 	}
 
-	Cycles(std::set<Edge<int>> input_edges)
+	Cycles(std::set<Edge<T>> input_edges)
 		: adjacency(input_edges.size(), false), real_edges(input_edges)
 	{
 	}
