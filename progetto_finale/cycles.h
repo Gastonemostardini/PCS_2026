@@ -61,7 +61,7 @@ public:
 		for (const auto &edge : real_edges)
 		{
 			if (adjacency[i])
-				edges.insert(edge);
+				edges.push_back(edge);
 			i++;
 		}
 		return edges;
@@ -74,7 +74,9 @@ public:
 
 	Cycles<T, EdgeT> operator^(Cycles<T, EdgeT> other)
 	{
-		return adjacency ^ other.adjacency;
+		Cycles<T, EdgeT> result(real_edges);
+		result.adjacency = adjacency ^ other.adjacency;
+		return result;
 	};
 
 	// Cycles& operator=(Cycles<T, EdgeT> other) {
