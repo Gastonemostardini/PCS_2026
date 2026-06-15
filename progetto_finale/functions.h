@@ -55,6 +55,59 @@ std::ostream &operator<<(std::ostream &os, const std::set<T> obj)
     return os;
 }
 
+template <typename T1, typename T2>
+std::ostream &operator<<(std::ostream &os, const std::pair<T1, T2> &p)
+{
+    os << "(" << p.first << "," << p.second << ")";
+    return os;
+}
+
+// Parsing di una std::pair nel formato "(first,second)", speculare a operator<<.
+// Esempio:  (1,A)  ->  p.first = 1, p.second = "A"
+template <typename T1, typename T2>
+std::istream &operator>>(std::istream &is, std::pair<T1, T2> &p)
+{
+    char c;
+
+    // salta gli spazi e si aspetta la parentesi di apertura '('
+    if (!(is >> c))
+        return is; // EOF o errore: lascia il failbit per fermare il while del parser
+    if (c != '(')
+    {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+
+    // legge il primo elemento (es. int)
+    is >> p.first;
+
+    // si aspetta il separatore ','
+    if (!(is >> c) || c != ',')
+    {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+
+    // legge il secondo elemento: tutto ciò che resta fino alla ')'
+    std::string token;
+    std::getline(is, token, ')');
+    std::istringstream ss(token);
+    ss >> p.second;
+
+    return is;
+}
+
+template <typename T>
+concept  Streamable = requires(std::ostream &os, std::istream &is, T &value) {
+    { os << value } -> std::same_as<std::ostream &>;
+    { is >> value } -> std::same_as<std::istream &>;
+};
+
+template <typename T>
+concept Printable = requires(std::ostream &os, std::istream &is, T &value) {
+    { os << value } -> std::same_as<std::ostream &>;
+};
+
 bool operator*(std::vector<bool> a, std::vector<bool> b)
 {
     if (a.size() != b.size())
