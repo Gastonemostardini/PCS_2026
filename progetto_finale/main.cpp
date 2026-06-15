@@ -21,6 +21,7 @@ using namespace std;
 // UNICO PUNTO in cui si decide il tipo dei nodi del circuito.
 // Cambiando SOLO questa riga (es. in int) il tipo si propaga ovunque.
 using NodeType = pair<int, string>;
+// using NodeType = int;
 using EdgeType = Edge<NodeType>;
 using CycleType = Cycles<NodeType, EdgeType>;
 
@@ -28,7 +29,7 @@ int main()
 {
 	input<NodeType> parser;
 	string nome_file = "testinputPIS.txt";
-	
+
 	cout << "=== Lettura e pulizia del circuito ===\n";
 	if (!(parser.parse_file(nome_file)) && parser.check_validity())
 	{
@@ -41,14 +42,14 @@ int main()
 
 	cout << "\n=== estrazione delle maglie ===\n";
 
-	bool usa_de_pina = true; // cambiare 'usa_de_pina' in 'false' per usare DFS
+	bool usa_de_pina = false; // cambiare 'usa_de_pina' in 'false' per usare DFS
 
 	std::list<CycleType> base_maglie;
-	
+
 	if (usa_de_pina)
 	{
 		cout << "-> Il sistema verra' risolto usando le maglie di DE PINA.\n";
-		
+
 		// De pina
 		base_maglie = de_pina(graph);
 		// cout << "De Pina - maglie fondamentali trovate: " << base_maglie.size() << "\n";
@@ -107,25 +108,17 @@ int main()
 				unsigned int riga_ramo = graph.edge_number(arco);
 				Component<NodeType> comp = parser.find_component(arco.from(), arco.to());
 
-				int verso_percorrenza = orientamento[arco];
-				B(riga_ramo, colonna_maglia) = verso_percorrenza;
-
-				// se su questo ramo c'è un generatore, gestiamo i segni
-				if (comp.type == 'V')
+				int8_t verso_ciclo = orientamento[arco];
+				if (comp.type == 'R')
 				{
-					auto nodo_partenza = (verso_percorrenza == 1) ? arco.from() : arco.to();
-					auto nodo_arrivo = (verso_percorrenza == 1) ? arco.to() : arco.from();
-
-					// salita di potenziale
-					if (nodo_partenza == comp.nodeB && nodo_arrivo == comp.nodeA)
-					{
-						v(colonna_maglia) += comp.value;
-					}
-					// discesa di potenziale
-					else if (nodo_partenza == comp.nodeA && nodo_arrivo == comp.nodeB)
-					{
-						v(colonna_maglia) -= comp.value;
-					}
+					B(riga_ramo, colonna_maglia) = verso_ciclo;
+				}
+				// se su questo ramo c'è un generatore, gestiamo i segni
+				// nota: il primo meno è della legge di kirchhoff
+				else if (comp.type == 'V')
+				{
+					int8_t verso_componente = (arco.from() == comp.nodeA) ? 1 : -1;
+					v(colonna_maglia) -= comp.value * verso_ciclo * verso_componente;
 				}
 			}
 		}
