@@ -27,7 +27,7 @@ bool find_path_dfs(const Graph<T, EdgeT> &T_graph, const T &start, const T &end,
         return true;
     }
 
-    for (const auto &neighbor : T_graph.neighbours(u))
+    for (const auto &neighbor : T_graph.neighbours(start))
     {
         if (!visited_nodes.contains(neighbor))
         {
