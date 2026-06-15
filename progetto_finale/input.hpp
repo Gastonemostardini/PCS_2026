@@ -21,13 +21,21 @@ struct Component
 	int getMaxNode() const { return std::max(nodeA, nodeB); }
 };
 
+std::ostream &operator<<(std::ostream &os, const Component &comp)
+{
+	os << comp.id << " (" << comp.value
+	<< ") connette " << comp.nodeA << " e " << comp.nodeB;
+	
+	return os;
+}
+
 class input
 {
 private:
 	std::vector<Component> all_components;
 	std::set<int> unique_nodes;
 
-	//  grado di ciascun nodo
+	// grado di ciascun nodo
 	std::map<int, int> compute_degrees() const
 	{
 		std::map<int, int> degrees;
@@ -184,11 +192,11 @@ public:
 		std::cout << "Nodi attivi: ";
 		for (int n : unique_nodes)
 			std::cout << n << " ";
-		std::cout << "\nComponenti attivi:\n";
+		std::cout << "\n";
+		std::cout << "Componenti attivi:\n";
 		for (const auto &comp : all_components)
 		{
-			std::cout << "  " << comp.id << " (" << comp.value
-					  << ") connette " << comp.nodeA << " e " << comp.nodeB << "\n";
+			std::cout << comp << "\n";
 		}
 		std::cout << "-----------------------------------\n";
 	}
