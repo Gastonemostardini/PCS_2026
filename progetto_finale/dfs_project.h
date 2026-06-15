@@ -17,26 +17,27 @@
 // ispirarto allo pseudocodice del file pdf datoci da caridi
 // funzione per trovare le route nell'albero dfs
 template <typename T, typename EdgeT>
-bool find_path_dfs(const Graph<T, EdgeT> &T_graph, const T &u, const T &v, std::set<T> &visited, Lifo<T> &path)
+bool find_path_dfs(const Graph<T, EdgeT> &T_graph, const T &start, const T &end, std::set<T> &visited_nodes, Lifo<T> &path)
 {
-    visited.insert(u);
-    path.put(u);
+    visited_nodes.insert(start);
+    path.put(start);
 
-    if (u == v)
+    if (start == end)
     {
         return true;
     }
 
     for (const auto &neighbor : T_graph.neighbours(u))
     {
-        if (!visited.contains(neighbor))
+        if (!visited_nodes.contains(neighbor))
         {
-            if (find_path_dfs(T_graph, neighbor, v, visited, path))
+            if (find_path_dfs(T_graph, neighbor, end, visited_nodes, path))
             {
                 return true;
             }
         }
     }
+
     path.get();
     return false;
 }
@@ -56,14 +57,11 @@ std::list<Cycles<T, EdgeT>> find_minimal_cycles(Graph<T, EdgeT> G, Graph<T, Edge
     //"Ogni arco (u, v) del co-albero genera esattamente un ciclo fondamentale se unito a T"
     for (const auto &edge : C.all_edges())
     {
-        T u = edge.from();
-        T v = edge.to();
-
         std::set<T> visited;
         Lifo<T> path;
 
         // cerco il cammino tra i due estremi dell'arco sfruttando solo i rami dell'albero
-        if (find_path_dfs(T_graph, u, v, visited, path))
+        if (find_path_dfs(T_graph, edge.from(), edge.to(), visited, path))
         {
             std::set<EdgeT> cycle_edges;
 
