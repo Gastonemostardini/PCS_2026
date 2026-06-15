@@ -258,7 +258,7 @@ TreeGraph<T, EdgeT> dijkstra(const Graph<T, EdgeT> &graph, T start, T end)
 }
 
 template <typename T, typename EdgeT = Edge<T>>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Cycles<T, EdgeT> depina_helper(const Graph<T, EdgeT> &graph, Cycles<T, EdgeT> S)
 {
 	std::set<Signed<T>> duplicati;

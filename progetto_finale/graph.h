@@ -6,18 +6,19 @@
 #include <utility>
 
 template <typename T, typename EdgeT = Edge<T>>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 class Graph;
 
 template <typename T, typename EdgeT>
+	requires std::totally_ordered<T> && Printable<T>
 std::ostream &operator<<(std::ostream &os, const Graph<T, EdgeT> &obj);
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 class Graph
 {
 	template <typename U, typename EdgeU>
-		requires std::totally_ordered<U>
+		requires std::totally_ordered<U> && Printable<U>
 	friend class TreeGraph;
 
 protected:
@@ -62,6 +63,7 @@ template <typename T, typename EdgeT>
 Graph(std::set<T>, std::set<EdgeT>) -> Graph<T, EdgeT>;
 
 template <typename T, typename EdgeT>
+	requires Printable<T>
 std::ostream &operator<<(std::ostream &os, const Graph<T, EdgeT> &obj)
 {
 	os << "nodes: \n";
@@ -72,7 +74,7 @@ std::ostream &operator<<(std::ostream &os, const Graph<T, EdgeT> &obj)
 }
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Graph<T, EdgeT>::Graph(std::set<T> nodes)
 {
 	nodes_ = nodes;
@@ -80,7 +82,7 @@ Graph<T, EdgeT>::Graph(std::set<T> nodes)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Graph<T, EdgeT>::Graph(std::set<EdgeT> edges)
 {
 	for (auto edge : edges)
@@ -90,7 +92,7 @@ Graph<T, EdgeT>::Graph(std::set<EdgeT> edges)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Graph<T, EdgeT>::Graph(std::set<T> nodes, std::set<EdgeT> edges)
 {
 	nodes_ = nodes;
@@ -104,7 +106,7 @@ Graph<T, EdgeT>::Graph(std::set<T> nodes, std::set<EdgeT> edges)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Graph<T, EdgeT>::Graph(const Graph &other)
 {
 	nodes_ = other.nodes_;
@@ -116,7 +118,7 @@ Graph<T, EdgeT>::Graph(const Graph &other)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 std::set<T> Graph<T, EdgeT>::neighbours(T value) const
 {
 	std::set<T> neighbours;
@@ -129,7 +131,7 @@ std::set<T> Graph<T, EdgeT>::neighbours(T value) const
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 void Graph<T, EdgeT>::add_edge(T from, T to)
 {
 	EdgeT edge(from, to);
@@ -137,7 +139,7 @@ void Graph<T, EdgeT>::add_edge(T from, T to)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 void Graph<T, EdgeT>::add_edge(EdgeT edge)
 {
 	if (edge.from() == edge.to())
@@ -148,7 +150,7 @@ void Graph<T, EdgeT>::add_edge(EdgeT edge)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 void Graph<T, EdgeT>::remove_node(T node)
 {
 	nodes_.erase(node);
@@ -160,28 +162,28 @@ void Graph<T, EdgeT>::remove_node(T node)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 std::set<EdgeT> Graph<T, EdgeT>::all_edges() const
 {
 	return edges_;
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 std::set<T> Graph<T, EdgeT>::all_nodes() const
 {
 	return nodes_;
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 bool Graph<T, EdgeT>::has_node(T &target) const
 {
 	return nodes_.contains(target);
 }
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 unsigned int Graph<T, EdgeT>::edge_number(const EdgeT edge) const
 {
 	auto it = edges_.find(edge);
@@ -193,7 +195,7 @@ unsigned int Graph<T, EdgeT>::edge_number(const EdgeT edge) const
 }
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 const EdgeT &Graph<T, EdgeT>::edge_at(unsigned int i) const
 {
 	if (i >= edges_.size())
@@ -206,14 +208,14 @@ const EdgeT &Graph<T, EdgeT>::edge_at(unsigned int i) const
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 void Graph<T, EdgeT>::normalize()
 {
 	fixIsolated();
 }
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 void Graph<T, EdgeT>::fixIsolated()
 {
 	return;
@@ -227,7 +229,7 @@ void Graph<T, EdgeT>::fixIsolated()
 }
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Graph<T, EdgeT> Graph<T, EdgeT>::operator-(const Graph<T, EdgeT> &other)
 {
 	std::set<EdgeT> edges = edges_;
@@ -248,7 +250,7 @@ Graph<T, EdgeT> Graph<T, EdgeT>::operator-(const Graph<T, EdgeT> &other)
 };
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 bool Graph<T, EdgeT>::operator==(const Graph<T, EdgeT> &other)
 {
 	if (all_nodes() != other.all_nodes())
@@ -259,7 +261,7 @@ bool Graph<T, EdgeT>::operator==(const Graph<T, EdgeT> &other)
 }
 
 template <typename T, typename EdgeT>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 bool Graph<T, EdgeT>::operator!=(const Graph<T, EdgeT> &other)
 {
 	if (all_nodes() != other.all_nodes())

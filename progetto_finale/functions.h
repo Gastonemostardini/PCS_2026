@@ -171,6 +171,7 @@ struct Signed
 };
 
 template <typename T>
+    requires Printable<T>
 std::ostream &operator<<(std::ostream &os, const Signed<T> &obj)
 {
     os << "(" << obj.value << (obj.positive ? "+" : "-") << ")";

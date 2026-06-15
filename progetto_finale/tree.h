@@ -1,6 +1,7 @@
 #pragma once
 #include <ostream>
 #include "graph.h"
+#include "functions.h"
 #include <set>
 #include <map>
 #include <queue>
@@ -18,7 +19,7 @@ std::ostream &operator<<(std::ostream &os, const std::map<T, int> obj)
 }
 
 template <typename T, typename EdgeT = Edge<T>>
-    requires std::totally_ordered<T>
+    requires std::totally_ordered<T> && Printable<T>
 class TreeGraph : public Graph<T, EdgeT>
 {
     T root_;

@@ -7,10 +7,11 @@
 #include <algorithm>
 #include <map>
 #include <set>
+#include "functions.h"
 #include "graph.h"
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Streamable<T>
 struct Component
 {
 	std::string id; // R1, R2, V2, ...
@@ -25,7 +26,7 @@ struct Component
 };
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 std::ostream &operator<<(std::ostream &os, const Component<T> &comp)
 {
 	os << comp.id << " (" << comp.value
@@ -35,7 +36,7 @@ std::ostream &operator<<(std::ostream &os, const Component<T> &comp)
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Streamable<T>
 class input
 {
 private:

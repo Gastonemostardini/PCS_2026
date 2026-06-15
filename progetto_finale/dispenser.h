@@ -5,6 +5,7 @@
 
 
 template <typename T>
+    requires  Printable<T>
 class Dispenser
 {
 

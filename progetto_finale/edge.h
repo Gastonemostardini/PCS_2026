@@ -1,8 +1,9 @@
 #pragma once
 #include <ostream>
+#include "functions.h"
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 class Edge
 {
 	T from_;
@@ -27,28 +28,28 @@ public:
 };
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 T Edge<T>::from() const
 {
 	return from_;
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 T Edge<T>::to() const
 {
 	return to_;
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 bool Edge<T>::has(T value) const
 {
 	return (from_ == value || to_ == value);
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 Edge<T>::Edge(T from, T to)
 {
 	from_ = from;
@@ -57,7 +58,7 @@ Edge<T>::Edge(T from, T to)
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 void Edge<T>::normalize()
 {
 	if (from_ > to_)
@@ -69,7 +70,7 @@ void Edge<T>::normalize()
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 bool Edge<T>::operator<(Edge<T> const &other) const
 {
 	if (from_ < other.from_)
@@ -86,7 +87,7 @@ bool Edge<T>::operator<(Edge<T> const &other) const
 }
 
 template <typename T>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 bool Edge<T>::operator==(Edge<T> const &other) const
 {
 	return (from_ == other.from_ && other.to_ == to_);

@@ -7,7 +7,7 @@
 #include <map>
 
 template <typename T, typename EdgeT = Edge<T>>
-	requires std::totally_ordered<T>
+	requires std::totally_ordered<T> && Printable<T>
 class Cycles
 {
 
