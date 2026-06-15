@@ -182,8 +182,10 @@ public:
 				return comp;
 			}
 		}
-		// Ritorna un componente nullo se non presente
-		return Component{"", ' ', 0.0, 0, 0};
+		
+		throw std::out_of_range(
+          "Nessun componente tra i nodi " + std::to_string(nA) +
+          " e " + std::to_string(nB));
 	}
 
 	void print_status() const
