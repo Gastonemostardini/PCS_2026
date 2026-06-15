@@ -39,7 +39,7 @@ int main(int argc, const char *argv[])
 	input<NodeType> parser;
 	string nome_file = "testinputPIS.txt";
 
-	cout << "=== Lettura e pulizia del circuito ===\n";
+	// cout << "=== Lettura e pulizia del circuito ===\n";
 	if (!(parser.parse_file(nome_file)) && parser.check_validity())
 	{
 		return EXIT_FAILURE;
