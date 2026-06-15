@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -8,39 +9,45 @@
 #include <set>
 #include "graph.h"
 
+template <typename T>
+	requires std::totally_ordered<T>
 struct Component
 {
 	std::string id; // R1, R2, V2, ...
 	char type;		// divisione in R e V
 	double value;	// valore
-	int nodeA;		// nodo di partenza
-	int nodeB;		// nodo di arrivo
+	T nodeA;		// nodo di partenza
+	T nodeB;		// nodo di arrivo
 
 	// ordine
-	int getMinNode() const { return std::min(nodeA, nodeB); }
-	int getMaxNode() const { return std::max(nodeA, nodeB); }
+	T getMinNode() const { return std::min(nodeA, nodeB); }
+	T getMaxNode() const { return std::max(nodeA, nodeB); }
 };
 
-std::ostream &operator<<(std::ostream &os, const Component &comp)
+template <typename T>
+	requires std::totally_ordered<T>
+std::ostream &operator<<(std::ostream &os, const Component<T> &comp)
 {
 	os << comp.id << " (" << comp.value
-	<< ") connette " << comp.nodeA << " e " << comp.nodeB;
-	
+	   << ") connette " << comp.nodeA << " e " << comp.nodeB;
+
 	return os;
 }
 
+template <typename T>
+	requires std::totally_ordered<T>
 class input
 {
 private:
-	std::vector<Component> all_components;
-	std::set<int> unique_nodes;
+	std::vector<Component<T>> all_components;
+	std::set<T> unique_nodes;
 
 	// grado di ciascun nodo
-	std::map<int, int> compute_degrees() const
+	std::map<T, int> compute_degrees() const
 	{
-		std::map<int, int> degrees;
+		std::map<T, int> degrees;
 		// d(a) = 0
-		for (int node : unique_nodes)
+		for (T node : unique_nodes)
 		{
 			degrees[node] = 0;
 		}
@@ -68,7 +75,7 @@ public:
 
 		std::string id;
 		double value;
-		int nA, nB;
+		T nA, nB;
 
 		// approccio robusto visto a lezione
 		while (ifs >> id >> value >> nA >> nB)
@@ -82,7 +89,7 @@ public:
 			}
 			char type = id[0]; // estrae R o V
 
-			Component comp{id, type, value, nA, nB};
+			Component<T> comp{id, type, value, nA, nB};
 			all_components.push_back(comp);
 
 			unique_nodes.insert(nA);
@@ -98,11 +105,11 @@ public:
 	{
 		// numero componenti  tra due nodi
 		// Chiave: pair(nodo_min, nodo_max), Valore: conteggio
-		std::map<std::pair<int, int>, int> connections;
+		std::map<std::pair<T, T>, int> connections;
 
 		for (const auto &comp : all_components)
 		{
-			std::pair<int, int> edge = {comp.getMinNode(), comp.getMaxNode()};
+			std::pair<T, T> edge = {comp.getMinNode(), comp.getMaxNode()};
 			connections[edge]++;
 
 			if (connections[edge] > 1)
@@ -123,8 +130,8 @@ public:
 		while (graph_changed)
 		{
 			graph_changed = false;
-			std::map<int, int> degrees = compute_degrees();
-			std::vector<Component> active_components;
+			std::map<T, int> degrees = compute_degrees();
+			std::vector<Component<T>> active_components;
 
 			for (const auto &comp : all_components)
 			{
@@ -153,13 +160,13 @@ public:
 		}
 	}
 
-	const std::vector<Component> &get_components() const { return all_components; }
-	const std::set<int> &get_nodes() const { return unique_nodes; }
+	const std::vector<Component<T>> &get_components() const { return all_components; }
+	const std::set<T> &get_nodes() const { return unique_nodes; }
 
 	// 4. generazione del grafo
-	Graph<int> get_graph() const
+	Graph<T> get_graph() const
 	{
-		Graph<int> circuito(unique_nodes);
+		Graph<T> circuito(unique_nodes);
 
 		//  archi
 		for (const auto &comp : all_components)
@@ -171,10 +178,10 @@ public:
 	}
 
 	// 5. recupero componente tramite nodi
-	Component find_component(int nA, int nB) const
+	Component<T> find_component(T nA, T nB) const
 	{
-		int minN = std::min(nA, nB);
-		int maxN = std::max(nA, nB);
+		T minN = std::min(nA, nB);
+		T maxN = std::max(nA, nB);
 		for (const auto &comp : all_components)
 		{
 			if (comp.getMinNode() == minN && comp.getMaxNode() == maxN)
@@ -182,17 +189,17 @@ public:
 				return comp;
 			}
 		}
-		
-		throw std::out_of_range(
-          "Nessun componente tra i nodi " + std::to_string(nA) +
-          " e " + std::to_string(nB));
+
+		std::ostringstream oss;
+		oss << "Nessun componente tra i nodi " << nA << " e " << nB;
+		throw std::out_of_range(oss.str());
 	}
 
 	void print_status() const
 	{
 		std::cout << "--- Stato Corrente del Circuito ---\n";
 		std::cout << "Nodi attivi: ";
-		for (int n : unique_nodes)
+		for (T n : unique_nodes)
 			std::cout << n << " ";
 		std::cout << "\n";
 		std::cout << "Componenti attivi:\n";
