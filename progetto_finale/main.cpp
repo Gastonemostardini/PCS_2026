@@ -21,8 +21,7 @@ using namespace std;
 // ====================================================================
 // UNICO PUNTO in cui si decide il tipo dei nodi del circuito.
 // Cambiando SOLO questa riga (es. in int) il tipo si propaga ovunque.
-// ====================================================================
-using NodeType = string;
+using NodeType = pair<int, string>;
 using EdgeType = Edge<NodeType>;
 using CycleType = Cycles<NodeType, EdgeType>;
 
