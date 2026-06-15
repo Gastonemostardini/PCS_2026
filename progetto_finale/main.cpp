@@ -26,9 +26,15 @@ using NodeType = pair<int, string>;
 using EdgeType = Edge<NodeType>;
 using CycleType = Cycles<NodeType, EdgeType>;
 
-int main()
+int main(int argc, const char *argv[])
 {
 	bool usa_de_pina = true; // cambiare 'usa_de_pina' in 'false' per usare DFS
+	for (int k = 1; k < argc; ++k)
+	{
+		std::string arg = argv[k];
+		if (arg == "--dfs")
+			usa_de_pina = false;
+	}
 
 	input<NodeType> parser;
 	string nome_file = "testinputPIS.txt";
@@ -40,9 +46,8 @@ int main()
 	}
 
 	parser.clean_graph(); //  rami aperti e isolati
-	parser.print_status();
+	// parser.print_status();
 	Graph<NodeType> graph = parser.get_graph(); // otteniamo il grafo
-
 
 	std::list<CycleType> base_maglie;
 	if (usa_de_pina)
@@ -56,8 +61,7 @@ int main()
 		base_maglie = find_minimal_cycles(graph, albero_dfs);
 	}
 
-
-	// Costruzione delle matrici 
+	// Costruzione delle matrici
 	CircuitMatrices mats = build_matrices(graph, base_maglie, parser);
 	Eigen::MatrixXd A = mats.B.transpose() * mats.R * mats.B;
 
@@ -79,7 +83,6 @@ int main()
 		I_maglie = cg.solveWithGuess(mats.v, x0);
 	}
 
-
 	Eigen::VectorXd I_rami = mats.B * I_maglie;
 	Eigen::VectorXd V_rami = mats.R * I_rami;
 
@@ -95,9 +98,9 @@ int main()
 			double v_branch = V_rami(riga);
 
 			// togliamo i -0.0
-			if (std::abs(i_branch) < 1e-10)
+			if (std::abs(i_branch) < 1e-13)
 				i_branch = 0.0;
-			if (std::abs(v_branch) < 1e-10)
+			if (std::abs(v_branch) < 1e-13)
 				v_branch = 0.0;
 
 			cout << "V(" << comp.id << ") = " << v_branch << " V \tI = " << i_branch << " A\n";

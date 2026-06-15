@@ -36,9 +36,9 @@ CircuitMatrices build_matrices(const Graph<T, EdgeT> &graph,
 	mats.R = Eigen::MatrixXd::Zero(m, m);
 	mats.v = Eigen::VectorXd::Zero(k);
 
-	std::cout << " Matrice incidenza B (rami x maglie):\t" << mats.B.rows() << "x" << mats.B.cols() << "\n";
-	std::cout << " Matrice resistenza R (rami x rami): \t" << mats.R.rows() << "x" << mats.R.cols() << "\n";
-	std::cout << " Vettore generatori v (Maglie x 1):  \t" << mats.v.rows() << "x" << mats.v.cols() << "\n";
+	// std::cout << " Matrice incidenza B (rami x maglie):\t" << mats.B.rows() << "x" << mats.B.cols() << "\n";
+	// std::cout << " Matrice resistenza R (rami x rami): \t" << mats.R.rows() << "x" << mats.R.cols() << "\n";
+	// std::cout << " Vettore generatori v (Maglie x 1):  \t" << mats.v.rows() << "x" << mats.v.cols() << "\n";
 
 	// R
 	for (const auto &arco : graph.all_edges())
