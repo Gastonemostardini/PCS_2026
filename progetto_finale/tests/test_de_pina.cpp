@@ -4,10 +4,10 @@
 #include <set>
 #include <cstdlib>
 #include <stdexcept>
-#include "edge.h"
-#include "graph.h"
-#include "cycles.h"
-#include "search_graph.h"
+#include "../edge.h"
+#include "../graph.h"
+#include "../cycles.h"
+#include "../search_graph.h"
 
 using namespace std;
 

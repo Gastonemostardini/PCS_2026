@@ -6,14 +6,14 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <Eigen/Dense>
-#include "edge.h"
-#include "graph.h"
-#include "tree.h"
-#include "search_graph.h"
-#include "cycles.h"
-#include "dfs_project.h"
-#include "input.hpp"
-#include "matrices.h"
+#include "../edge.h"
+#include "../graph.h"
+#include "../tree.h"
+#include "../search_graph.h"
+#include "../cycles.h"
+#include "../dfs_project.h"
+#include "../input.hpp"
+#include "../matrices.h"
 
 using namespace std;
 

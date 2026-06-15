@@ -2,7 +2,7 @@
 #include <vector>
 #include <list>
 #include <stdexcept>
-#include "functions.h"
+#include "../functions.h"
 
 using namespace std;
 

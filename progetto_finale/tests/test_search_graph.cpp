@@ -5,10 +5,10 @@
 #include <list>
 #include <cstdlib>
 #include <stdexcept>
-#include "edge.h"
-#include "graph.h"
-#include "tree.h"
-#include "search_graph.h"
+#include "../edge.h"
+#include "../graph.h"
+#include "../tree.h"
+#include "../search_graph.h"
 
 using namespace std;
 

@@ -5,11 +5,11 @@
 #include <list>
 #include <cstdlib>
 #include <stdexcept>
-#include "edge.h"
-#include "graph.h"
-#include "cycles.h"
-#include "search_graph.h"
-#include "dfs_project.h"
+#include "../edge.h"
+#include "../graph.h"
+#include "../cycles.h"
+#include "../search_graph.h"
+#include "../dfs_project.h"
 
 // g++ -I /usr/include/eigen3 -std=c++20 test_dfs_project.cpp per compilare
 int main()

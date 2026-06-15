@@ -2,7 +2,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
-#include "functions.h"
+#include "../functions.h"
 
 int main()
 {

@@ -19,22 +19,22 @@ target_link_libraries(main ${libraries_list})
 #target_link_libraries(test_gradiente ${libraries_list})
 
 # Test dei componenti specifici del progetto (cicli / metodo delle maglie)
-add_executable(test_search_graph test_search_graph.cpp)
+add_executable(test_search_graph tests/test_search_graph.cpp)
 target_link_libraries(test_search_graph ${libraries_list})
 add_test(NAME test_search_graph COMMAND test_search_graph)
 
-add_executable(test_cycles test_cycles.cpp)
+add_executable(test_cycles tests/test_cycles.cpp)
 target_link_libraries(test_cycles ${libraries_list})
 add_test(NAME test_cycles COMMAND test_cycles)
 
-add_executable(test_de_pina test_de_pina.cpp)
+add_executable(test_de_pina tests/test_de_pina.cpp)
 target_link_libraries(test_de_pina ${libraries_list})
 add_test(NAME test_de_pina COMMAND test_de_pina)
 
-add_executable(test_functions test_functions.cpp)
+add_executable(test_functions tests/test_functions.cpp)
 target_link_libraries(test_functions ${libraries_list})
 add_test(NAME test_functions COMMAND test_functions)
 
-add_executable(test_matrices test_matrices.cpp)
+add_executable(test_matrices tests/test_matrices.cpp)
 target_link_libraries(test_matrices ${libraries_list})
 add_test(NAME test_matrices COMMAND test_matrices)

@@ -4,8 +4,8 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
-#include "edge.h"
-#include "cycles.h"
+#include "../edge.h"
+#include "../cycles.h"
 
 using namespace std;
 
