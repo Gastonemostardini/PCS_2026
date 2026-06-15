@@ -15,6 +15,7 @@
 #include "functions.h"
 #include "Eigen/Eigen"
 #include "dfs_project.h"
+#include "matrices.h"
 
 using namespace std;
 
@@ -67,68 +68,12 @@ int main()
 
 	cout << "\n=== Matrici ===\n";
 
-	int m = graph.all_edges().size(); // # rami
-	int k = base_maglie.size();		  // # maglie
-
-	Eigen::MatrixXd B = Eigen::MatrixXd::Zero(m, k);
-	Eigen::MatrixXd R = Eigen::MatrixXd::Zero(m, m);
-	Eigen::VectorXd v = Eigen::VectorXd::Zero(k);
-
-	cout << " Matrice incidenza B (rami x maglie):\t" << B.rows() << "x" << B.cols() << "\n";
-	cout << " Matrice resistenza R (rami x rami): \t" << R.rows() << "x" << R.cols() << "\n";
-	cout << " Vettore generatori v (Maglie x 1):  \t" << v.rows() << "x" << v.cols() << "\n";
-
-	// R
-	for (const auto &arco : graph.all_edges())
-	{
-		unsigned int riga = graph.edge_number(arco);
-		Component<NodeType> comp = parser.find_component(arco.from(), arco.to());
-
-		if (comp.type == 'R')
-		{
-			R(riga, riga) = comp.value;
-		}
-	}
-
-	int colonna_maglia = 0;
-
-	for (auto ciclo : base_maglie)
-	{
-
-		// diamo un verso di percorrenza alla maglia per kirchhoff
-		// i versi sono solo +1 / 0 / -1, quindi basta un int8_t
-		std::map<EdgeType, std::int8_t> orientamento = orienta_maglia(ciclo, graph);
-
-		for (const auto &arco : graph.all_edges())
-		{
-
-			// se questo ramo fa parte della maglia corrente
-			if (ciclo.is_active(arco))
-			{
-				unsigned int riga_ramo = graph.edge_number(arco);
-				Component<NodeType> comp = parser.find_component(arco.from(), arco.to());
-
-				int8_t verso_ciclo = orientamento[arco];
-				if (comp.type == 'R')
-				{
-					B(riga_ramo, colonna_maglia) = verso_ciclo;
-				}
-				// se su questo ramo c'è un generatore, gestiamo i segni
-				// nota: il primo meno è della legge di kirchhoff
-				else if (comp.type == 'V')
-				{
-					int8_t verso_componente = (arco.from() == comp.nodeA) ? 1 : -1;
-					v(colonna_maglia) -= comp.value * verso_ciclo * verso_componente;
-				}
-			}
-		}
-		colonna_maglia++; // passiamo ad analizzare la maglia successiva
-	}
+	CircuitMatrices mats = build_matrices(graph, base_maglie, parser);
 
 	cout << "\n=== soluzione sistema ===\n";
 
 	// risoluzione sistema
-	Eigen::MatrixXd A = B.transpose() * R * B;
+	Eigen::MatrixXd A = mats.B.transpose() * mats.R * mats.B;
 	Eigen::VectorXd I_maglie;
 
 	// Tentiamo la decomposizione di Cholesky (LLT): riesce (info() == Success)
@@ -138,19 +83,19 @@ int main()
 	if (chol.info() == Eigen::Success)
 	{
 		cout << "A e' definita positiva: risoluzione con Cholesky (LLT).\n";
-		I_maglie = chol.solve(v);
+		I_maglie = chol.solve(mats.v);
 	}
 	else
 	{
 		cout << "A non e' definita positiva: ripiego sul Gradiente Coniugato.\n";
-		Eigen::VectorXd x0 = Eigen::VectorXd::Zero(k); // punto di partenza: vettore zero
+		Eigen::VectorXd x0 = Eigen::VectorXd::Zero(mats.B.cols()); // punto di partenza: vettore zero
 		Eigen::ConjugateGradient<Eigen::MatrixXd, Eigen::Lower | Eigen::Upper> cg;
 		cg.compute(A);
-		I_maglie = cg.solveWithGuess(v, x0);
+		I_maglie = cg.solveWithGuess(mats.v, x0);
 	}
 
-	Eigen::VectorXd I_rami = B * I_maglie;
-	Eigen::VectorXd V_rami = R * I_rami;
+	Eigen::VectorXd I_rami = mats.B * I_maglie;
+	Eigen::VectorXd V_rami = mats.R * I_rami;
 
 	for (const auto &arco : graph.all_edges())
 	{
