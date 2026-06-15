@@ -4,6 +4,12 @@
 #include <list>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
+#include <istream>
+#include <ostream>
+#include <sstream>
+#include <concepts>
+#include <string>
+#include <utility>
 
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const std::vector<T> &obj)
