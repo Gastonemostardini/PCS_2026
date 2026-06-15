@@ -18,10 +18,18 @@
 
 using namespace std;
 
+// ====================================================================
+// UNICO PUNTO in cui si decide il tipo dei nodi del circuito.
+// Cambiando SOLO questa riga (es. in int) il tipo si propaga ovunque.
+// ====================================================================
+using NodeType = string;
+using EdgeType = Edge<NodeType>;
+using CycleType = Cycles<NodeType, EdgeType>;
+
 int main()
 {
 	cout << "=== Lettura e pulizia del circuito ===\n";
-	input parser;
+	input<NodeType> parser;
 	string nome_file = "testinput.txt";
 
 	if (!parser.parse_file(nome_file))
@@ -36,18 +44,18 @@ int main()
 
 	parser.clean_graph(); //  rami aperti e isolati
 	parser.print_status();
-	Graph<int> graph = parser.get_graph(); // otteniamo il grafo
+	Graph<NodeType> graph = parser.get_graph(); // otteniamo il grafo
 
 	cout << "\n=== esrtazione maglie con De Pina e DFS ===\n";
 
 	bool usa_de_pina = true; // cambiare 'usa_de_pina' in 'false' per usare DFS
 
-	std::list<Cycles<int, Edge<int>>> base_maglie;
+	std::list<CycleType> base_maglie;
 
 	if (usa_de_pina)
 	{
 		// De pina
-		std::list<Cycles<int, Edge<int>>> maglie_depina = de_pina(graph);
+		std::list<CycleType> maglie_depina = de_pina(graph);
 		cout << "De Pina - maglie fondamentali trovate: " << maglie_depina.size() << "\n";
 
 		cout << "-> SCELTA: Il sistema verra' risolto usando le maglie di DE PINA.\n";
@@ -56,9 +64,9 @@ int main()
 	else
 	{
 		// Dfs
-		int nodo_radice = *graph.all_nodes().begin();
-		TreeGraph<int, Edge<int>> albero_dfs = recursive_dfs(graph, nodo_radice);
-		std::list<Cycles<int, Edge<int>>> maglie_dfs = find_minimal_cycles(graph, albero_dfs);
+		NodeType nodo_radice = *graph.all_nodes().begin();
+		TreeGraph<NodeType, EdgeType> albero_dfs = recursive_dfs(graph, nodo_radice);
+		std::list<CycleType> maglie_dfs = find_minimal_cycles(graph, albero_dfs);
 		cout << "DFS - maglie fondamentali trovate: " << maglie_dfs.size() << "\n";
 
 		cout << "-> SCELTA: Il sistema verra' risolto usando le maglie della DFS.\n";
@@ -84,7 +92,7 @@ int main()
 	for (const auto &arco : graph.all_edges())
 	{
 		unsigned int riga = graph.edge_number(arco);
-		Component comp = parser.find_component(arco.from(), arco.to());
+		Component<NodeType> comp = parser.find_component(arco.from(), arco.to());
 
 		if (comp.type == 'R')
 		{
@@ -99,7 +107,7 @@ int main()
 
 		// diamo un verso di percorrenza alla maglia per kirchhoff
 		// i versi sono solo +1 / 0 / -1, quindi basta un int8_t
-		std::map<Edge<int>, std::int8_t> orientamento = orienta_maglia(ciclo, graph);
+		std::map<EdgeType, std::int8_t> orientamento = orienta_maglia(ciclo, graph);
 
 		for (const auto &arco : graph.all_edges())
 		{
@@ -108,7 +116,7 @@ int main()
 			if (ciclo.is_active(arco))
 			{
 				unsigned int riga_ramo = graph.edge_number(arco);
-				Component comp = parser.find_component(arco.from(), arco.to());
+				Component<NodeType> comp = parser.find_component(arco.from(), arco.to());
 
 				int verso_percorrenza = orientamento[arco];
 				B(riga_ramo, colonna_maglia) = verso_percorrenza;
@@ -116,8 +124,8 @@ int main()
 				// se su questo ramo c'è un generatore, gestiamo i segni
 				if (comp.type == 'V')
 				{
-					int nodo_partenza = (verso_percorrenza == 1) ? arco.from() : arco.to();
-					int nodo_arrivo = (verso_percorrenza == 1) ? arco.to() : arco.from();
+					auto nodo_partenza = (verso_percorrenza == 1) ? arco.from() : arco.to();
+					auto nodo_arrivo = (verso_percorrenza == 1) ? arco.to() : arco.from();
 
 					// salita di potenziale
 					if (nodo_partenza == comp.nodeB && nodo_arrivo == comp.nodeA)
@@ -166,7 +174,7 @@ int main()
 
 	for (const auto &arco : graph.all_edges())
 	{
-		Component comp = parser.find_component(arco.from(), arco.to());
+		Component<NodeType> comp = parser.find_component(arco.from(), arco.to());
 
 		// stampiamo solo per le R, ignorando le V
 		if (comp.type == 'R')
