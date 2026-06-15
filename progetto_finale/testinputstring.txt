@@ -1,0 +1,7 @@
+V1 30.0 (Pippo) Pluto
+V2 40.0 Rico 12
+R1 4.0 Pluto Tango
+R2 10.0 (Pippo) Tango
+R3 30.0 (Pippo) Rico
+R4 10.0 Rico Tango
+R5 4.0 Tango 12
