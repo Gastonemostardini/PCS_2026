@@ -22,7 +22,7 @@ using namespace std;
 // UNICO PUNTO in cui si decide il tipo dei nodi del circuito.
 // Cambiando SOLO questa riga (es. in int) il tipo si propaga ovunque.
 // using NodeType = int;
-using NodeType = pair<int, string>;
+using NodeType = int;
 using EdgeType = Edge<NodeType>;
 using CycleType = Cycles<NodeType, EdgeType>;
 
@@ -37,7 +37,7 @@ int main(int argc, const char *argv[])
 	}
 
 	input<NodeType> parser;
-	string nome_file = "testinputPIS.txt";
+	string nome_file = "testinput.txt";
 
 	// cout << "=== Lettura e pulizia del circuito ===\n";
 	if (!(parser.parse_file(nome_file)) && parser.check_validity())
