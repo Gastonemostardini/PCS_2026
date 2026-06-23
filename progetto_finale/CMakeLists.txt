@@ -38,3 +38,7 @@ add_test(NAME test_functions COMMAND test_functions)
 add_executable(test_matrices tests/test_matrices.cpp)
 target_link_libraries(test_matrices ${libraries_list})
 add_test(NAME test_matrices COMMAND test_matrices)
+
+add_executable(test_input tests/test_input.cpp)
+target_link_libraries(test_input ${libraries_list})
+add_test(NAME test_input COMMAND test_input)
