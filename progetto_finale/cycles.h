@@ -133,7 +133,7 @@ public:
 		}
 	}
 
-	void remuve_edge(EdgeT edge)
+	void remove_edge(EdgeT edge)
 	{
 		std::size_t i = 0;
 		for (const auto &e : real_edges)
