@@ -40,7 +40,7 @@ int main(int argc, const char *argv[])
 	string nome_file = "testinput.txt";
 
 	// cout << "=== Lettura e pulizia del circuito ===\n";
-	if (!(parser.parse_file(nome_file)) && parser.check_validity())
+	if (!parser.parse_file(nome_file) || !parser.check_validity())
 	{
 		return EXIT_FAILURE;
 	}
