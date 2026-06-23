@@ -320,7 +320,6 @@ template <typename T, typename EdgeT = Edge<T>>
 	requires std::totally_ordered<T>
 std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT> &graph)
 {
-	// std::list<Cycles<T, EdgeT>> de_pina(const Graph<T, EdgeT>& graph, std::vector<Cycles<T, EdgeT>> S){
 	std::list<Cycles<T, EdgeT>> base;
 	std::set<EdgeT> all_edges = graph.all_edges();
 	int k = all_edges.size() - graph.all_nodes().size() + 1;
