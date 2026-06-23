@@ -29,15 +29,17 @@ using CycleType = Cycles<NodeType, EdgeType>;
 int main(int argc, const char *argv[])
 {
 	bool usa_de_pina = true; // cambiare 'usa_de_pina' in 'false' per usare DFS
+	string nome_file = "testinput.txt";
 	for (int k = 1; k < argc; ++k)
 	{
 		std::string arg = argv[k];
 		if (arg == "--dfs")
 			usa_de_pina = false;
+		else
+			nome_file = arg; // argomento posizionale: nome del file di input
 	}
 
 	input<NodeType> parser;
-	string nome_file = "testinput.txt";
 
 	// cout << "=== Lettura e pulizia del circuito ===\n";
 	if (!parser.parse_file(nome_file) || !parser.check_validity())
