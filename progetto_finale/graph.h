@@ -219,13 +219,6 @@ template <typename T, typename EdgeT>
 void Graph<T, EdgeT>::fixIsolated()
 {
 	return;
-	for (auto node : nodes_)
-	{
-		if (neighbours(node).empty())
-		{
-			add_edge(node, node);
-		}
-	}
 }
 
 template <typename T, typename EdgeT>
